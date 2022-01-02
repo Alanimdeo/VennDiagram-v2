@@ -1,0 +1,21 @@
+{
+    "name": "venndiagram-v2",
+    "version": "1.0.0",
+    "description": "A new version of VennDiagram",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "cd dist && supervisor index.js",
+        "compile": "tsc -w"
+    },
+    "repository": "https://github.com/alnaimdeo/VennDiagram-v2",
+    "author": "Alanimdeo",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "@discordjs/opus": "^0.7.0",
+        "discord.js": "^13.5.0",
+        "ffmpeg": "^0.0.4",
+        "fluent-ffmpeg": "^2.1.2",
+        "ytdl-core": "^4.9.2"
+    }
+}
