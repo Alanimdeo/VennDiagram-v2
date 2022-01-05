@@ -11,6 +11,8 @@ module.exports = new Command(
         if (!interaction.guildId) return;
         let guildQueue = bot.player.queue.get(interaction.guildId);
         if (!guildQueue) return await interaction.editReply("봇이 음성 채널에 참가 중이지 않아요.");
+        guildQueue.audioPlayer.stop(true);
+        guildQueue.connection.destroy();
         bot.player.queue.delete(interaction.guildId);
         await interaction.editReply({
             embeds: [new MessageEmbed({ color: "#008000", title: ":eject: 음성 채널에서 퇴장했어요" })],

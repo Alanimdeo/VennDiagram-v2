@@ -13,6 +13,8 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue)
         return await interaction.editReply("봇이 음성 채널에 참가 중이지 않아요.");
+    guildQueue.audioPlayer.stop(true);
+    guildQueue.connection.destroy();
     bot.player.queue.delete(interaction.guildId);
     await interaction.editReply({
         embeds: [new discord_js_1.MessageEmbed({ color: "#008000", title: ":eject: 음성 채널에서 퇴장했어요" })],
