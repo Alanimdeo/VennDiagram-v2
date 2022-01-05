@@ -14,13 +14,13 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
         });
     }
     else
-        message += "..노래가 없어요. `/재생 (노래 제목 또는 유튜브 링크)` 명령어를 통해 노래를 틀어 보세요!";
+        message += ".노래가 없어요. `/재생 (노래 제목 또는 유튜브 링크)` 명령어를 통해 노래를 틀어 보세요!";
     await interaction.editReply({
         embeds: [
             new discord_js_1.MessageEmbed({
                 color: "#0067a3",
                 title: `:scroll: ${interaction.guild?.name} 서버의 재생 목록`,
-                description: message.slice(2),
+                description: message.slice(1),
             }),
         ],
     });

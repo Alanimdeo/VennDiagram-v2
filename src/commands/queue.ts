@@ -13,13 +13,13 @@ module.exports = new Command(
             guildQueue.songs.forEach((song: Song, index: number) => {
                 message += `\n\`${String(index + 1).padStart(length, "0")}. ${song.title} (${song.duration})\``;
             });
-        } else message += "..노래가 없어요. `/재생 (노래 제목 또는 유튜브 링크)` 명령어를 통해 노래를 틀어 보세요!";
+        } else message += ".노래가 없어요. `/재생 (노래 제목 또는 유튜브 링크)` 명령어를 통해 노래를 틀어 보세요!";
         await interaction.editReply({
             embeds: [
                 new MessageEmbed({
                     color: "#0067a3",
                     title: `:scroll: ${interaction.guild?.name} 서버의 재생 목록`,
-                    description: message.slice(2),
+                    description: message.slice(1),
                 }),
             ],
         });
