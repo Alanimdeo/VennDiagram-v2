@@ -82,7 +82,7 @@ export class Queue {
                         .setDescription(
                             `[${this.songs[0].title}](${this.songs[0].url}) (${
                                 this.songs[0].duration > 59 ? Math.floor(this.songs[0].duration / 60) : "0"
-                            }:${this.songs[0].duration % 60})`
+                            }:${String(this.songs[0].duration % 60).padStart(2, "0")})`
                         )
                         .setThumbnail(this.songs[0].thumbnail)
                         .setFooter({

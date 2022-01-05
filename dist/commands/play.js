@@ -34,7 +34,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
             new discord_js_1.MessageEmbed()
                 .setColor("#008000")
                 .setTitle(":white_check_mark: 곡을 추가했어요")
-                .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration > 59 ? Math.floor(lastSong.duration / 60) : "0"}:${lastSong.duration % 60})`)
+                .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration > 59 ? Math.floor(lastSong.duration / 60) : "0"}:${String(lastSong.duration % 60).padStart(2, "0")})`)
                 .setThumbnail(lastSong.thumbnail),
         ],
     });

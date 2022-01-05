@@ -34,7 +34,7 @@ module.exports = new Command(
                     .setDescription(
                         `[${lastSong.title}](${lastSong.url}) (${
                             lastSong.duration > 59 ? Math.floor(lastSong.duration / 60) : "0"
-                        }:${lastSong.duration % 60})`
+                        }:${String(lastSong.duration % 60).padStart(2, "0")})`
                     )
                     .setThumbnail(lastSong.thumbnail),
             ],
