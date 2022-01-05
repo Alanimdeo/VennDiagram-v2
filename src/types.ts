@@ -50,7 +50,7 @@ export class Queue {
     isPlaying: boolean;
     audioPlayer: AudioPlayer;
     async play(url: string) {
-        let { stream, type } = await demuxProbe(ytdl(url));
+        let { stream, type } = await demuxProbe(ytdl(url, { quality: "lowestaudio" }));
         this.audioPlayer.play(createAudioResource(stream, { inputType: type }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;

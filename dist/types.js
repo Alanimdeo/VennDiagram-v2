@@ -59,7 +59,7 @@ class Queue {
         });
     }
     async play(url) {
-        let { stream, type } = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(url));
+        let { stream, type } = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(url, { quality: "lowestaudio" }));
         this.audioPlayer.play((0, voice_1.createAudioResource)(stream, { inputType: type }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;
