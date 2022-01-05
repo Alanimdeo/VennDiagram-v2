@@ -37,7 +37,7 @@ class Queue {
         this.audioPlayer.on(voice_1.AudioPlayerStatus.Idle, async () => {
             this.songs.shift();
             if (this.songs.length > 0) {
-                this.play(this.songs[0].url);
+                this.play(this.songs[0]);
             }
             else
                 this.isPlaying = false;
@@ -46,8 +46,8 @@ class Queue {
             await this.textChannel.send({
                 embeds: [
                     new discord_js_1.MessageEmbed()
-                        .setColor("#008000")
-                        .setTitle(":fast_forward: 다음 곡을 재생할게요")
+                        .setColor("#0067a3")
+                        .setTitle(":arrow_forward: 다음 곡을 재생할게요")
                         .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration > 59 ? Math.floor(this.songs[0].duration / 60) : "0"}:${this.songs[0].duration % 60})`)
                         .setThumbnail(this.songs[0].thumbnail)
                         .setFooter({
@@ -58,8 +58,8 @@ class Queue {
             });
         });
     }
-    async play(url) {
-        let { stream, type } = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(url, { quality: "lowestaudio" }));
+    async play(song) {
+        let { stream, type } = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(song.url, { quality: "lowestaudio" }));
         this.audioPlayer.play((0, voice_1.createAudioResource)(stream, { inputType: type }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;

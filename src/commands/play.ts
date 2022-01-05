@@ -1,4 +1,4 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { search } from "../modules/search";
 import { Bot, Command, Queue, Song } from "../types";
@@ -16,7 +16,6 @@ module.exports = new Command(
         let keyword = interaction.options.getString("제목");
         if (!keyword) return await interaction.editReply("error");
         const result = await search(keyword, 1);
-        await interaction.editReply("결과:");
         result.forEach(async (video) => {
             if (interaction.channel) await interaction.channel.send(video.type === "video" ? video.title : "오류");
         });
@@ -29,8 +28,21 @@ module.exports = new Command(
         }
         if (!guildQueue) return;
         guildQueue.songs.push(new Song(await getInfo(song.url), interaction.member as GuildMember));
+        await interaction.editReply({
+            embeds: [
+                new MessageEmbed()
+                    .setColor("#008000")
+                    .setTitle(":white_check_mark: 곡을 추가했어요")
+                    .setDescription(
+                        `[${guildQueue.songs[0].title}](${guildQueue.songs[0].url}) (${
+                            guildQueue.songs[0].duration > 59 ? Math.floor(guildQueue.songs[0].duration / 60) : "0"
+                        }:${guildQueue.songs[0].duration % 60})`
+                    )
+                    .setThumbnail(guildQueue.songs[0].thumbnail),
+            ],
+        });
         if (!guildQueue.isPlaying) {
-            await guildQueue.play(guildQueue.songs[0].url);
+            await guildQueue.play(guildQueue.songs[0]);
         }
     }
 );

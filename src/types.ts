@@ -49,8 +49,8 @@ export class Queue {
     songs: Song[];
     isPlaying: boolean;
     audioPlayer: AudioPlayer;
-    async play(url: string) {
-        let { stream, type } = await demuxProbe(ytdl(url, { quality: "lowestaudio" }));
+    async play(song: Song) {
+        let { stream, type } = await demuxProbe(ytdl(song.url, { quality: "lowestaudio" }));
         this.audioPlayer.play(createAudioResource(stream, { inputType: type }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;
@@ -70,15 +70,15 @@ export class Queue {
         this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
             this.songs.shift();
             if (this.songs.length > 0) {
-                this.play(this.songs[0].url);
+                this.play(this.songs[0]);
             } else this.isPlaying = false;
         });
         this.audioPlayer.on(AudioPlayerStatus.Playing, async () => {
             await this.textChannel.send({
                 embeds: [
                     new MessageEmbed()
-                        .setColor("#008000")
-                        .setTitle(":fast_forward: 다음 곡을 재생할게요")
+                        .setColor("#0067a3")
+                        .setTitle(":arrow_forward: 다음 곡을 재생할게요")
                         .setDescription(
                             `[${this.songs[0].title}](${this.songs[0].url}) (${
                                 this.songs[0].duration > 59 ? Math.floor(this.songs[0].duration / 60) : "0"

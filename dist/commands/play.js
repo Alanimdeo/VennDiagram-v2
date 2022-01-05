@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
 const builders_1 = require("@discordjs/builders");
 const search_1 = require("../modules/search");
 const types_1 = require("../types");
@@ -16,7 +17,6 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     if (!keyword)
         return await interaction.editReply("error");
     const result = await (0, search_1.search)(keyword, 1);
-    await interaction.editReply("결과:");
     result.forEach(async (video) => {
         if (interaction.channel)
             await interaction.channel.send(video.type === "video" ? video.title : "오류");
@@ -32,7 +32,16 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     if (!guildQueue)
         return;
     guildQueue.songs.push(new types_1.Song(await (0, ytdl_core_1.getInfo)(song.url), interaction.member));
+    await interaction.editReply({
+        embeds: [
+            new discord_js_1.MessageEmbed()
+                .setColor("#008000")
+                .setTitle(":white_check_mark: 곡을 추가했어요")
+                .setDescription(`[${guildQueue.songs[0].title}](${guildQueue.songs[0].url}) (${guildQueue.songs[0].duration > 59 ? Math.floor(guildQueue.songs[0].duration / 60) : "0"}:${guildQueue.songs[0].duration % 60})`)
+                .setThumbnail(guildQueue.songs[0].thumbnail),
+        ],
+    });
     if (!guildQueue.isPlaying) {
-        await guildQueue.play(guildQueue.songs[0].url);
+        await guildQueue.play(guildQueue.songs[0]);
     }
 });
