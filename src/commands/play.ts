@@ -29,7 +29,6 @@ module.exports = new Command(
         }
         if (!guildQueue) return;
         guildQueue.songs.push(new Song(await getInfo(song.url), interaction.member as GuildMember));
-        console.log(interaction.member);
         if (!guildQueue.isPlaying) {
             await guildQueue.play(guildQueue.songs[0].url);
         }

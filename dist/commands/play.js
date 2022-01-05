@@ -32,7 +32,6 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     if (!guildQueue)
         return;
     guildQueue.songs.push(new types_1.Song(await (0, ytdl_core_1.getInfo)(song.url), interaction.member));
-    console.log(interaction.member);
     if (!guildQueue.isPlaying) {
         await guildQueue.play(guildQueue.songs[0].url);
     }
