@@ -12,7 +12,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     await interaction.deferReply();
     let author = interaction.member;
     if (!author.voice.channel)
-        return await interaction.editReply("음성 채널에 참가하세요!");
+        return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let keyword = interaction.options.getString("제목");
     if (!keyword)
         return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
