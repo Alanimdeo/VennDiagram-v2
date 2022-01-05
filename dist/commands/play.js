@@ -8,7 +8,7 @@ const ytdl_core_1 = require("ytdl-core");
 module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setName("재생")
     .setDescription("노래를 재생합니다.")
-    .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(false)), async (interaction, bot) => {
+    .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(true)), async (interaction, bot) => {
     await interaction.deferReply();
     let author = interaction.member;
     if (!author.voice.channel)
@@ -28,13 +28,14 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     if (!guildQueue)
         return;
     guildQueue.songs.push(new types_1.Song(await (0, ytdl_core_1.getInfo)(song.url), interaction.member));
+    let lastSong = guildQueue.songs[guildQueue.songs.length - 1];
     await interaction.editReply({
         embeds: [
             new discord_js_1.MessageEmbed()
                 .setColor("#008000")
                 .setTitle(":white_check_mark: 곡을 추가했어요")
-                .setDescription(`[${guildQueue.songs[0].title}](${guildQueue.songs[0].url}) (${guildQueue.songs[0].duration > 59 ? Math.floor(guildQueue.songs[0].duration / 60) : "0"}:${guildQueue.songs[0].duration % 60})`)
-                .setThumbnail(guildQueue.songs[0].thumbnail),
+                .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration > 59 ? Math.floor(lastSong.duration / 60) : "0"}:${lastSong.duration % 60})`)
+                .setThumbnail(lastSong.thumbnail),
         ],
     });
     if (!guildQueue.isPlaying) {

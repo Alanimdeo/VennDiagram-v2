@@ -8,7 +8,7 @@ module.exports = new Command(
     new SlashCommandBuilder()
         .setName("재생")
         .setDescription("노래를 재생합니다.")
-        .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(false)),
+        .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(true)),
     async (interaction: CommandInteraction, bot: Bot) => {
         await interaction.deferReply();
         let author: GuildMember = interaction.member as GuildMember;
@@ -25,17 +25,18 @@ module.exports = new Command(
         }
         if (!guildQueue) return;
         guildQueue.songs.push(new Song(await getInfo(song.url), interaction.member as GuildMember));
+        let lastSong = guildQueue.songs[guildQueue.songs.length - 1];
         await interaction.editReply({
             embeds: [
                 new MessageEmbed()
                     .setColor("#008000")
                     .setTitle(":white_check_mark: 곡을 추가했어요")
                     .setDescription(
-                        `[${guildQueue.songs[0].title}](${guildQueue.songs[0].url}) (${
-                            guildQueue.songs[0].duration > 59 ? Math.floor(guildQueue.songs[0].duration / 60) : "0"
-                        }:${guildQueue.songs[0].duration % 60})`
+                        `[${lastSong.title}](${lastSong.url}) (${
+                            lastSong.duration > 59 ? Math.floor(lastSong.duration / 60) : "0"
+                        }:${lastSong.duration % 60})`
                     )
-                    .setThumbnail(guildQueue.songs[0].thumbnail),
+                    .setThumbnail(lastSong.thumbnail),
             ],
         });
         if (!guildQueue.isPlaying) {
