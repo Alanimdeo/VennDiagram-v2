@@ -1,17 +1,14 @@
-const init = (message: string, keepMessage: boolean = false) =>
-    process.stdout.write((keepMessage ? "" : "\r") + message);
+const init = (message: string) => process.stdout.write("\r" + message);
 init("모듈 불러오는 중...");
 const config = require("./config.json");
 import { Intents, Interaction, Message } from "discord.js";
 import { readdirSync } from "fs";
 import { Bot, Command } from "./types";
-init(" 완료!", true);
 
 init("봇 생성 중...");
 const bot: Bot = new Bot({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES],
 });
-init(" 완료!", true);
 
 const commands = readdirSync("./commands").filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
@@ -30,7 +27,7 @@ for (const file of adminCommands) {
 }
 
 bot.once("ready", () => {
-    init(`로그인 완료! 토큰: \x1b[32m${config.token}\x1b[0m\n준비 완료!\n`);
+    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m\n`);
 });
 
 bot.on("interactionCreate", async (interaction: Interaction) => {
@@ -51,4 +48,5 @@ bot.on("messageCreate", async (message: Message) => {
     await command.execute(message, bot);
 });
 
+init("로그인 중...");
 bot.login(config.token);

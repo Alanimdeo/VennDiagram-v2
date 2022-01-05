@@ -1,17 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const init = (message, keepMessage = false) => process.stdout.write((keepMessage ? "" : "\r") + message);
+const init = (message) => process.stdout.write("\r" + message);
 init("모듈 불러오는 중...");
 const config = require("./config.json");
 const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
 const types_1 = require("./types");
-init(" 완료!", true);
 init("봇 생성 중...");
 const bot = new types_1.Bot({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_VOICE_STATES],
 });
-init(" 완료!", true);
 const commands = (0, fs_1.readdirSync)("./commands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
     const command = require(`./commands/${file}`);
@@ -25,7 +23,7 @@ for (const file of adminCommands) {
     bot.adminCommands.set(command.data.name, command);
 }
 bot.once("ready", () => {
-    init(`로그인 완료! 토큰: \x1b[32m${config.token}\x1b[0m\n준비 완료!\n`);
+    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m\n`);
 });
 bot.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())
@@ -43,4 +41,5 @@ bot.on("messageCreate", async (message) => {
         return;
     await command.execute(message, bot);
 });
+init("로그인 중...");
 bot.login(config.token);

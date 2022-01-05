@@ -14,11 +14,8 @@ module.exports = new Command(
         let author: GuildMember = interaction.member as GuildMember;
         if (!author.voice.channel) return await interaction.editReply("음성 채널에 참가하세요!");
         let keyword = interaction.options.getString("제목");
-        if (!keyword) return await interaction.editReply("error");
+        if (!keyword) return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
         const result = await search(keyword, 1);
-        result.forEach(async (video) => {
-            if (interaction.channel) await interaction.channel.send(video.type === "video" ? video.title : "오류");
-        });
         let song = result[0];
         if (song.type !== "video" || !interaction.guildId || !interaction.channel || !interaction.member) return;
         let guildQueue = bot.player.queue.get(interaction.guildId);
