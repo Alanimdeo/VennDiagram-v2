@@ -8,9 +8,9 @@ module.exports = new Command(
         let message = "";
         let guildQueue = bot.player.queue.get(interaction.guildId ? interaction.guildId : "");
         if (guildQueue) {
-            let length = guildQueue.songs.length - 1;
+            let length = String(guildQueue.songs.length).length;
             guildQueue.songs.forEach(async (song: Song, index: number) => {
-                message += `\n${index != length ? "├" : "⎿"} ${song.title} (${song.duration})`;
+                message += `\n\`${String(index + 1).padStart(length, "0")}. ${song.title} (${song.duration})\``;
             });
         }
         await interaction.reply(`:scroll: ${interaction.guild?.name} 서버의 재생 목록${message}`);

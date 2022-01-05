@@ -6,9 +6,9 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
     let message = "";
     let guildQueue = bot.player.queue.get(interaction.guildId ? interaction.guildId : "");
     if (guildQueue) {
-        let length = guildQueue.songs.length - 1;
+        let length = String(guildQueue.songs.length).length;
         guildQueue.songs.forEach(async (song, index) => {
-            message += `\n${index != length ? "├" : "⎿"} ${song.title} (${song.duration})`;
+            message += `\n\`${String(index + 1).padStart(length, "0")}. ${song.title} (${song.duration})\``;
         });
     }
     await interaction.reply(`:scroll: ${interaction.guild?.name} 서버의 재생 목록${message}`);
