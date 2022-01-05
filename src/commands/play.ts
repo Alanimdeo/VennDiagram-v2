@@ -31,11 +31,7 @@ module.exports = new Command(
                 new MessageEmbed()
                     .setColor("#008000")
                     .setTitle(":white_check_mark: 곡을 추가했어요")
-                    .setDescription(
-                        `[${lastSong.title}](${lastSong.url}) (${
-                            lastSong.duration > 59 ? Math.floor(lastSong.duration / 60) : "0"
-                        }:${String(lastSong.duration % 60).padStart(2, "0")})`
-                    )
+                    .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration})`)
                     .setThumbnail(lastSong.thumbnail),
             ],
         });

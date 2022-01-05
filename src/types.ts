@@ -79,11 +79,7 @@ export class Queue {
                     new MessageEmbed()
                         .setColor("#0067a3")
                         .setTitle(":arrow_forward: 다음 곡을 재생할게요")
-                        .setDescription(
-                            `[${this.songs[0].title}](${this.songs[0].url}) (${
-                                this.songs[0].duration > 59 ? Math.floor(this.songs[0].duration / 60) : "0"
-                            }:${String(this.songs[0].duration % 60).padStart(2, "0")})`
-                        )
+                        .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)
                         .setThumbnail(this.songs[0].thumbnail)
                         .setFooter({
                             text: `${this.songs[0].requestedUser.nickname} 님이 신청하셨어요.`,
@@ -99,7 +95,7 @@ export class Song {
     title: string;
     url: string;
     thumbnail: string;
-    duration: number;
+    duration: string;
     isLive: boolean;
     requestedUser: GuildMember;
 
@@ -107,7 +103,8 @@ export class Song {
         this.title = songInfo.videoDetails.title;
         this.url = songInfo.videoDetails.video_url;
         this.thumbnail = `https://i.ytimg.com/vi/${songInfo.videoDetails.videoId}/hqdefault.jpg`;
-        this.duration = Number(songInfo.videoDetails.lengthSeconds);
+        let duration = Number(songInfo.videoDetails.lengthSeconds);
+        this.duration = `${duration > 59 ? Math.floor(duration / 60) : "0"}:${String(duration % 60).padStart(2, "0")}`;
         this.isLive = songInfo.videoDetails.isLiveContent;
         this.requestedUser = requestedUser;
     }
