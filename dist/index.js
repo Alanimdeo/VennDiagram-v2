@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const init = (message) => process.stdout.write("\r" + message);
+const init = (message) => {
+    console.clear();
+    console.log(message);
+};
 init("모듈 불러오는 중...");
 const config = require("./config.json");
 const discord_js_1 = require("discord.js");
@@ -23,7 +26,7 @@ for (const file of adminCommands) {
     bot.adminCommands.set(command.data.name, command);
 }
 bot.once("ready", () => {
-    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m\n`);
+    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
 });
 bot.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())

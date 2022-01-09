@@ -1,4 +1,7 @@
-const init = (message: string) => process.stdout.write("\r" + message);
+const init = (message: string) => {
+    console.clear();
+    console.log(message);
+};
 init("모듈 불러오는 중...");
 const config = require("./config.json");
 import { Intents, Interaction, Message } from "discord.js";
@@ -27,7 +30,7 @@ for (const file of adminCommands) {
 }
 
 bot.once("ready", () => {
-    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m\n`);
+    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
 });
 
 bot.on("interactionCreate", async (interaction: Interaction) => {

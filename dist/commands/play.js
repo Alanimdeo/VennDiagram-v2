@@ -4,7 +4,9 @@ const discord_js_1 = require("discord.js");
 const builders_1 = require("@discordjs/builders");
 const search_1 = require("../modules/search");
 const types_1 = require("../types");
+const queue_1 = require("../modules/queue");
 const ytdl_core_1 = require("ytdl-core");
+const song_1 = require("../modules/song");
 module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setName("재생")
     .setDescription("노래를 재생합니다.")
@@ -22,12 +24,12 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
         return;
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) {
-        bot.player.queue.set(interaction.guildId, new types_1.Queue(interaction.channel, author.voice.channel));
+        bot.player.queue.set(interaction.guildId, new queue_1.Queue(interaction.channel, author.voice.channel));
         guildQueue = bot.player.queue.get(interaction.guildId);
     }
     if (!guildQueue)
         return;
-    guildQueue.songs.push(new types_1.Song(await (0, ytdl_core_1.getInfo)(song.url), interaction.member));
+    guildQueue.songs.push(new song_1.Song(await (0, ytdl_core_1.getInfo)(song.url), interaction.member));
     let lastSong = guildQueue.songs[guildQueue.songs.length - 1];
     await interaction.editReply({
         embeds: [

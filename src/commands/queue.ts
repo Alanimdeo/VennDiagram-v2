@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { Bot, Command, Song } from "../types";
+import { Song } from "../modules/song";
+import { Bot, Command } from "../types";
 
 module.exports = new Command(
     new SlashCommandBuilder().setName("목록").setDescription("재생 목록을 확인합니다."),
