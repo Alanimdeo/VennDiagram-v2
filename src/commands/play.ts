@@ -2,9 +2,9 @@ import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { search } from "../modules/search";
 import { Bot, Command } from "../types";
-import { Queue } from "../modules/queue";
 import { getInfo } from "ytdl-core";
 import { Song } from "../modules/song";
+import { Queue } from "../modules/player";
 
 module.exports = new Command(
     new SlashCommandBuilder()

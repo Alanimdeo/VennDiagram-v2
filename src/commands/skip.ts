@@ -10,9 +10,10 @@ module.exports = new Command(
         if (!author.voice.channel) return await interaction.editReply("음성 채널에 참가하세요!");
         let guildQueue = bot.player.queue.get(interaction.guildId ? interaction.guildId : "");
         if (!guildQueue || guildQueue.songs.length === 0)
-            return await interaction.editReply("재생 목록에 노래가 없습니다!");
+            return await interaction.editReply("재생 목록에 노래가 없어요.");
         guildQueue.songs.shift();
-        guildQueue.play(guildQueue.songs[0]);
+        if (guildQueue.songs.length !== 0) guildQueue.play(guildQueue.songs[0]);
+        else guildQueue.audioPlayer.stop();
         await interaction.editReply({
             embeds: [new MessageEmbed().setColor("#008000").setTitle(":fast_forward: 곡을 스킵했어요")],
         });
