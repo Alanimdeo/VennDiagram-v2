@@ -42,7 +42,7 @@ class Queue {
                         .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)
                         .setThumbnail(this.songs[0].thumbnail)
                         .setFooter({
-                        text: `${this.songs[0].requestedUser.nickname} 님이 신청하셨어요.`,
+                        text: `${this.songs[0].requestedUser.displayName} 님이 신청하셨어요.`,
                         iconURL: this.songs[0].requestedUser.displayAvatarURL(),
                     }),
                 ],
