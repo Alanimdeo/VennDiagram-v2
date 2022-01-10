@@ -7,7 +7,6 @@ import {
     DiscordGatewayAdapterCreator,
     joinVoiceChannel,
     NoSubscriberBehavior,
-    ProbeInfo,
     VoiceConnection,
 } from "@discordjs/voice";
 import { Collection, MessageEmbed, TextBasedChannel, VoiceBasedChannel } from "discord.js";
