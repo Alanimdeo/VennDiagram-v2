@@ -20,7 +20,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     guildQueue.songs.splice(removeNumber - 1, 1);
     if (removeNumber === 1 && guildQueue.songs.length !== 0)
         guildQueue.play(guildQueue.songs[0]);
-    else {
+    else if (guildQueue.songs.length === 0) {
         guildQueue.audioPlayer.stop();
         // if (guildQueue.songs.length === 0) {
         //     guildQueue.connection.destroy();
