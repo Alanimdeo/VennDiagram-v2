@@ -21,7 +21,14 @@ module.exports = new Command(
         if (!removeNumber || removeNumber - 1 > guildQueue.songs.length)
             return await interaction.editReply("선택한 번호가 없어요.");
         guildQueue.songs.splice(removeNumber - 1, 1);
-        if (removeNumber === 1 && guildQueue.songs.length > 0) guildQueue.play(guildQueue.songs[0]);
+        if (removeNumber === 1 && guildQueue.songs.length !== 0) guildQueue.play(guildQueue.songs[0]);
+        else {
+            guildQueue.audioPlayer.stop();
+            if (guildQueue.songs.length === 0) {
+                guildQueue.connection.destroy();
+                bot.player.queue.delete(interaction.guildId);
+            }
+        }
         await interaction.editReply({
             embeds: [new MessageEmbed().setColor("#008000").setTitle(":x: 곡을 삭제했어요")],
         });

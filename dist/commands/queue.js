@@ -7,7 +7,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
     await interaction.deferReply();
     let message = "";
     let guildQueue = bot.player.queue.get(interaction.guildId ? interaction.guildId : "");
-    if (guildQueue) {
+    if (guildQueue && guildQueue.songs.length !== 0) {
         let length = String(guildQueue.songs.length).length;
         guildQueue.songs.forEach((song, index) => {
             message += `\n\`${String(index + 1).padStart(length, "0")}. ${song.title} (${song.duration})\``;
