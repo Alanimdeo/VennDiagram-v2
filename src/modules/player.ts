@@ -7,6 +7,7 @@ import {
     DiscordGatewayAdapterCreator,
     joinVoiceChannel,
     NoSubscriberBehavior,
+    ProbeInfo,
     VoiceConnection,
 } from "@discordjs/voice";
 import { Collection, MessageEmbed, TextBasedChannel, VoiceBasedChannel } from "discord.js";
@@ -29,8 +30,8 @@ export class Queue {
     isPlaying: boolean;
     audioPlayer: AudioPlayer;
     async play(song: Song) {
-        let { stream, type } = await demuxProbe(ytdl(song.url, { quality: "highestaudio" }));
-        this.audioPlayer.play(createAudioResource(stream, { inputType: type }));
+        let probe = await demuxProbe(ytdl(song.url, { quality: "highestaudio" }));
+        this.audioPlayer.play(createAudioResource(probe.stream, { inputType: probe.type }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;
     }

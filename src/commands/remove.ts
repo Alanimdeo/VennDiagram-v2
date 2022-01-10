@@ -24,10 +24,6 @@ module.exports = new Command(
         if (removeNumber === 1 && guildQueue.songs.length !== 0) guildQueue.play(guildQueue.songs[0]);
         else if (guildQueue.songs.length === 0) {
             guildQueue.audioPlayer.stop();
-            // if (guildQueue.songs.length === 0) {
-            //     guildQueue.connection.destroy();
-            //     bot.player.queue.delete(interaction.guildId);
-            // }
         }
         await interaction.editReply({
             embeds: [new MessageEmbed().setColor("#008000").setTitle(":x: 곡을 삭제했어요")],
