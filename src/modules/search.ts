@@ -7,7 +7,7 @@ export async function search(keyword: string, limit?: number): Promise<ytsr.Item
         if (!typeFilters) return reject(new Error("resultNotFound"));
         const filter = typeFilters.get("Video");
         if (!filter || !filter.url) return reject(new Error("resultNotFound"));
-        const searchResult = await ytsr(filter.url, { limit: limit ? limit : 5 });
+        const searchResult = await ytsr(filter.url, { hl: "ko", gl: "KR", limit: limit ? limit : 5 });
         return resolve(searchResult.items);
     });
 }

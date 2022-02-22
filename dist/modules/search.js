@@ -14,7 +14,7 @@ async function search(keyword, limit) {
         const filter = typeFilters.get("Video");
         if (!filter || !filter.url)
             return reject(new Error("resultNotFound"));
-        const searchResult = await (0, ytsr_1.default)(filter.url, { limit: limit ? limit : 5 });
+        const searchResult = await (0, ytsr_1.default)(filter.url, { hl: "ko", gl: "KR", limit: limit ? limit : 5 });
         return resolve(searchResult.items);
     });
 }
