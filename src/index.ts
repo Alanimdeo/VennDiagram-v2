@@ -1,14 +1,10 @@
-const init = (message: string) => {
-    console.clear();
-    console.log(message);
-};
-init("모듈 불러오는 중...");
+console.log("모듈 불러오는 중...");
 const config = require("./config.json");
 import { Intents, Interaction, Message } from "discord.js";
 import { readdirSync } from "fs";
 import { Bot, Command } from "./types";
 
-init("봇 생성 중...");
+console.log("봇 생성 중...");
 const bot: Bot = new Bot({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES],
 });
@@ -16,7 +12,7 @@ const bot: Bot = new Bot({
 const commands = readdirSync("./commands").filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
     const command: Command = require(`./commands/${file}`);
-    init(`명령어 불러오는 중.. (${command.data.name})`);
+    console.log(`명령어 불러오는 중.. (${command.data.name})`);
     bot.commands.set(command.data.name, command);
 }
 
@@ -25,12 +21,12 @@ const adminCommands = readdirSync("./adminCommands").filter(
 );
 for (const file of adminCommands) {
     const command: Command = require(`./adminCommands/${file}`);
-    init(`관리자 명령어 불러오는 중.. (${command.data.description})`);
+    console.log(`관리자 명령어 불러오는 중.. (${command.data.description})`);
     bot.adminCommands.set(command.data.name, command);
 }
 
 bot.once("ready", () => {
-    init(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
+    console.log(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
 });
 
 bot.on("interactionCreate", async (interaction: Interaction) => {
@@ -51,5 +47,5 @@ bot.on("messageCreate", async (message: Message) => {
     await command.execute(message, bot);
 });
 
-init("로그인 중...");
+console.log("로그인 중...");
 bot.login(config.token);
