@@ -29,7 +29,7 @@ export class Queue {
     isPlaying: boolean;
     audioPlayer: AudioPlayer;
     async play(song: Song) {
-        let probe = await demuxProbe(ytdl(song.url, { quality: "highestaudio" }));
+        let probe = await demuxProbe(ytdl(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }));
         this.audioPlayer.play(createAudioResource(probe.stream, { inputType: probe.type }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;
