@@ -40,5 +40,19 @@ bot.on("messageCreate", async (message) => {
         return;
     await command.execute(message, bot);
 });
+bot.on("voiceStateUpdate", (_, newState) => {
+    const guildQueue = bot.player.queue.get(newState.guild.id);
+    if (!guildQueue || !guildQueue.connection.joinConfig.channelId)
+        return;
+    const channel = newState.guild.channels.cache.get(guildQueue.connection.joinConfig.channelId);
+    if (!channel || !(channel.members instanceof discord_js_1.Collection))
+        return;
+    const members = Array.from(channel.members.keys());
+    if (members.length === 1 || !bot.user || !members.includes(bot.user.id)) {
+        guildQueue.audioPlayer.stop(true);
+        guildQueue.connection.destroy();
+        bot.player.queue.delete(newState.guild.id);
+    }
+});
 console.log("로그인 중...");
 bot.login(config.token);

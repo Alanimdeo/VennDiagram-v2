@@ -1,6 +1,6 @@
 console.log("모듈 불러오는 중...");
 const config = require("./config.json");
-import { Intents, Interaction, Message } from "discord.js";
+import { Collection, Intents, Interaction, Message, VoiceState } from "discord.js";
 import { readdirSync } from "fs";
 import { Bot, Command } from "./types";
 
@@ -45,6 +45,19 @@ bot.on("messageCreate", async (message: Message) => {
     if (!command) return;
 
     await command.execute(message, bot);
+});
+
+bot.on("voiceStateUpdate", (_, newState: VoiceState) => {
+    const guildQueue = bot.player.queue.get(newState.guild.id);
+    if (!guildQueue || !guildQueue.connection.joinConfig.channelId) return;
+    const channel = newState.guild.channels.cache.get(guildQueue.connection.joinConfig.channelId);
+    if (!channel || !(channel.members instanceof Collection)) return;
+    const members = Array.from(channel.members.keys());
+    if (members.length === 1 || !bot.user || !members.includes(bot.user.id)) {
+        guildQueue.audioPlayer.stop(true);
+        guildQueue.connection.destroy();
+        bot.player.queue.delete(newState.guild.id);
+    }
 });
 
 console.log("로그인 중...");

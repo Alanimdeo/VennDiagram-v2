@@ -3,7 +3,6 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { search } from "../modules/search";
 import { Bot, Command } from "../types";
 import { getInfo } from "ytdl-core";
-import { Item } from "ytsr";
 import { Song } from "../modules/song";
 import { Queue } from "../modules/player";
 
