@@ -18,7 +18,12 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     let keyword = interaction.options.getString("제목");
     if (!keyword)
         return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
-    const result = await (0, search_1.search)(keyword, 1);
+    const result = await (0, search_1.search)(keyword, 1).catch(async () => {
+        await interaction.editReply("검색 결과가 없어요.");
+        return;
+    });
+    if (!result)
+        return;
     let song = result[0];
     if (song.type !== "video" || !interaction.guildId || !interaction.channel || !interaction.member)
         return;

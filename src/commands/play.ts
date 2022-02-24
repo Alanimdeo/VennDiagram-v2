@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { search } from "../modules/search";
 import { Bot, Command } from "../types";
 import { getInfo } from "ytdl-core";
+import { Item } from "ytsr";
 import { Song } from "../modules/song";
 import { Queue } from "../modules/player";
 
@@ -17,7 +18,11 @@ module.exports = new Command(
         if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");
         let keyword = interaction.options.getString("제목");
         if (!keyword) return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
-        const result = await search(keyword, 1);
+        const result = await search(keyword, 1).catch(async () => {
+            await interaction.editReply("검색 결과가 없어요.");
+            return;
+        });
+        if (!result) return;
         let song = result[0];
         if (song.type !== "video" || !interaction.guildId || !interaction.channel || !interaction.member) return;
         let guildQueue = bot.player.queue.get(interaction.guildId);
