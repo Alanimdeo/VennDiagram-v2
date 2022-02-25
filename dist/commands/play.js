@@ -25,8 +25,8 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     if (!result)
         return;
     let song = result[0];
-    if (song.type !== "video" || !interaction.guildId || !interaction.channel || !interaction.member)
-        return;
+    if (!song || song.type !== "video" || !interaction.guildId || !interaction.channel || !interaction.member)
+        return await interaction.editReply("검색 결과가 없어요.");
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) {
         bot.player.queue.set(interaction.guildId, new player_1.Queue(interaction.channel, author.voice.channel));
