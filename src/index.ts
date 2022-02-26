@@ -39,7 +39,7 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
 });
 
 bot.on("messageCreate", async (message: Message) => {
-    if (!message.content.startsWith(config.adminPrefix)) return;
+    if (!message.content.startsWith(config.adminPrefix) || config.admins.includes(message.author.id)) return;
 
     const command = bot.adminCommands.get(message.content.split(" ")[1]);
     if (!command) return;
