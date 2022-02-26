@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 console.log("모듈 불러오는 중...");
-const config = require("./config.json");
+const config_1 = __importDefault(require("./config"));
 const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
 const types_1 = require("./types");
@@ -22,7 +25,7 @@ for (const file of adminCommands) {
     bot.adminCommands.set(command.data.name, command);
 }
 bot.once("ready", () => {
-    console.log(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
+    console.log(`준비 완료! 토큰: \x1b[32m${config_1.default.token}\x1b[0m`);
 });
 bot.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())
@@ -33,7 +36,7 @@ bot.on("interactionCreate", async (interaction) => {
     await command.execute(interaction, bot);
 });
 bot.on("messageCreate", async (message) => {
-    if (!message.content.startsWith(config.adminPrefix) || config.admins.includes(message.author.id))
+    if (!message.content.startsWith(config_1.default.adminPrefix) || config_1.default.admins.includes(message.author.id))
         return;
     const command = bot.adminCommands.get(message.content.split(" ")[1]);
     if (!command)
@@ -55,4 +58,4 @@ bot.on("voiceStateUpdate", (_, newState) => {
     }
 });
 console.log("로그인 중...");
-bot.login(config.token);
+bot.login(config_1.default.token);

@@ -1,5 +1,5 @@
 console.log("모듈 불러오는 중...");
-const config = require("./config.json");
+import config from "./config";
 import { Collection, Intents, Interaction, Message, VoiceState } from "discord.js";
 import { readdirSync } from "fs";
 import { Bot, Command } from "./types";
