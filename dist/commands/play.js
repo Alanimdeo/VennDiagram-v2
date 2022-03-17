@@ -18,14 +18,22 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     let keyword = interaction.options.getString("제목");
     if (!keyword)
         return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
-    const result = await (0, search_1.search)(keyword, 1).catch(async () => {
-        await interaction.editReply("검색 결과가 없어요.");
-        return;
-    });
-    if (!result)
-        return;
-    let song = result[0];
-    if (!song || song.type !== "video" || !interaction.guildId || !interaction.channel || !interaction.member)
+    let song = undefined;
+    if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
+        song = await (0, ytdl_core_1.getInfo)(keyword);
+    }
+    else {
+        const result = await (0, search_1.search)(keyword, 1).catch(async () => {
+            await interaction.editReply("검색 결과가 없어요.");
+            return;
+        });
+        if (!result || result[0].type != "video") {
+            await interaction.editReply("검색 결과가 없어요.");
+            return;
+        }
+        song = await (0, ytdl_core_1.getInfo)(result[0].url);
+    }
+    if (!song || !interaction.guildId || !interaction.channel || !interaction.member)
         return await interaction.editReply("검색 결과가 없어요.");
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) {
@@ -34,7 +42,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     }
     if (!guildQueue)
         return;
-    guildQueue.songs.push(new song_1.Song(await (0, ytdl_core_1.getInfo)(song.url), interaction.member));
+    guildQueue.songs.push(new song_1.Song(song, interaction.member));
     let lastSong = guildQueue.songs[guildQueue.songs.length - 1];
     await interaction.editReply({
         embeds: [
