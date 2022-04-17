@@ -9,11 +9,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .addStringOption((option) => option
     .setName("유형")
     .setDescription("반복 유형을 선택하세요.")
-    .addChoices([
-    ["없음", "none"],
-    ["곡", "song"],
-    ["전체", "all"],
-])
+    .addChoices({ name: "없음", value: "none" }, { name: "곡", value: "song" }, { name: "전체", value: "all" })
     .setRequired(true)), async (interaction, bot) => {
     await interaction.deferReply();
     let author = interaction.member;
