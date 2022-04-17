@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 console.log("모듈 불러오는 중...");
-const config_1 = __importDefault(require("./config"));
 const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
 const types_1 = require("./types");
+const config_1 = __importDefault(require("./config"));
 console.log("봇 생성 중...");
 const bot = new types_1.Bot({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_VOICE_STATES],
@@ -36,7 +36,7 @@ bot.on("interactionCreate", async (interaction) => {
     await command.execute(interaction, bot);
 });
 bot.on("messageCreate", async (message) => {
-    if (!message.content.startsWith(config_1.default.adminPrefix) || config_1.default.admins.includes(message.author.id))
+    if (!message.content.startsWith(config_1.default.adminPrefix) || !config_1.default.admins.includes(message.author.id))
         return;
     const command = bot.adminCommands.get(message.content.split(" ")[1]);
     if (!command)

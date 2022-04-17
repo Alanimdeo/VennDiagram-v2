@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const builders_1 = require("@discordjs/builders");
-const search_1 = require("../modules/search");
-const types_1 = require("../types");
 const ytdl_core_1 = require("ytdl-core");
+const search_1 = require("../modules/search");
 const song_1 = require("../modules/song");
 const player_1 = require("../modules/player");
+const types_1 = require("../types");
 module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setName("재생")
     .setDescription("노래를 재생합니다.")

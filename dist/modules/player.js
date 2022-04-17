@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Queue = exports.Player = void 0;
-const voice_1 = require("@discordjs/voice");
 const discord_js_1 = require("discord.js");
+const voice_1 = require("@discordjs/voice");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 class Player {
     constructor() {
@@ -24,9 +24,17 @@ class Queue {
         });
         this.songs = [];
         this.isPlaying = false;
+        this.repeatMode = "none";
         this.audioPlayer = (0, voice_1.createAudioPlayer)({ behaviors: { noSubscriber: voice_1.NoSubscriberBehavior.Pause } });
         this.audioPlayer.on(voice_1.AudioPlayerStatus.Idle, async () => {
-            this.songs.shift();
+            if (this.repeatMode === "none")
+                this.songs.shift();
+            else if (this.repeatMode === "all") {
+                let shiftedSong = this.songs.shift();
+                if (!shiftedSong)
+                    return;
+                this.songs.push(shiftedSong);
+            }
             if (this.songs.length > 0) {
                 this.play(this.songs[0]);
             }
