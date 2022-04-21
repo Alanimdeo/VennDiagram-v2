@@ -35,7 +35,7 @@ module.exports = new Command(
       return await interaction.editReply("검색 결과가 없어요.");
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) {
-      bot.player.queue.set(interaction.guildId, new Queue(interaction.channel, author.voice.channel));
+      bot.player.queue.set(interaction.guildId, new Queue(interaction.channel, author.voice.channel, bot));
       guildQueue = bot.player.queue.get(interaction.guildId);
     }
     if (!guildQueue) return;

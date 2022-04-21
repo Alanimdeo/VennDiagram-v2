@@ -3,3 +3,4 @@ config.json
 config.js
 config.ts
 yarn-error.log
+.DS_Store

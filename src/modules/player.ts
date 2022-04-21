@@ -12,6 +12,7 @@ import {
 } from "@discordjs/voice";
 import ytdl from "ytdl-core";
 import { Song } from "./song";
+import { Bot } from "../types";
 
 export class Player {
   queue: Collection<string, Queue>;
@@ -22,9 +23,11 @@ export class Player {
 }
 
 export class Queue {
+  bot: Bot;
   textChannel: TextBasedChannel;
   voiceChannel: VoiceBasedChannel;
   connection: VoiceConnection;
+  quitTimer: ReturnType<typeof setTimeout> | null;
   songs: Song[];
   isPlaying: boolean;
   repeatMode: "none" | "song" | "all";
@@ -36,7 +39,8 @@ export class Queue {
     this.isPlaying = true;
   }
 
-  constructor(textChannel: TextBasedChannel, voiceChannel: VoiceBasedChannel) {
+  constructor(textChannel: TextBasedChannel, voiceChannel: VoiceBasedChannel, bot: Bot) {
+    this.bot = bot;
     this.textChannel = textChannel;
     this.voiceChannel = voiceChannel;
     this.connection = joinVoiceChannel({
@@ -44,6 +48,7 @@ export class Queue {
       channelId: voiceChannel.id,
       adapterCreator: voiceChannel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
     });
+    this.quitTimer = null;
     this.songs = [];
     this.isPlaying = false;
     this.repeatMode = "none";
@@ -57,9 +62,19 @@ export class Queue {
       }
       if (this.songs.length > 0) {
         this.play(this.songs[0]);
-      } else this.isPlaying = false;
+      } else {
+        this.isPlaying = false;
+        this.quitTimer = setTimeout(() => {
+          this.connection.destroy();
+          this.bot.player.queue.delete(this.voiceChannel.guildId);
+        }, 300000);
+      }
     });
     this.audioPlayer.on(AudioPlayerStatus.Playing, async () => {
+      if (this.quitTimer) {
+        clearTimeout(this.quitTimer);
+        this.quitTimer = null;
+      }
       await this.textChannel.send({
         embeds: [
           new MessageEmbed()

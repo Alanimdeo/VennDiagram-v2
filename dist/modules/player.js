@@ -14,7 +14,8 @@ class Player {
 }
 exports.Player = Player;
 class Queue {
-    constructor(textChannel, voiceChannel) {
+    constructor(textChannel, voiceChannel, bot) {
+        this.bot = bot;
         this.textChannel = textChannel;
         this.voiceChannel = voiceChannel;
         this.connection = (0, voice_1.joinVoiceChannel)({
@@ -22,6 +23,7 @@ class Queue {
             channelId: voiceChannel.id,
             adapterCreator: voiceChannel.guild.voiceAdapterCreator,
         });
+        this.quitTimer = null;
         this.songs = [];
         this.isPlaying = false;
         this.repeatMode = "none";
@@ -38,10 +40,19 @@ class Queue {
             if (this.songs.length > 0) {
                 this.play(this.songs[0]);
             }
-            else
+            else {
                 this.isPlaying = false;
+                this.quitTimer = setTimeout(() => {
+                    this.connection.destroy();
+                    this.bot.player.queue.delete(this.voiceChannel.guildId);
+                }, 300000);
+            }
         });
         this.audioPlayer.on(voice_1.AudioPlayerStatus.Playing, async () => {
+            if (this.quitTimer) {
+                clearTimeout(this.quitTimer);
+                this.quitTimer = null;
+            }
             await this.textChannel.send({
                 embeds: [
                     new discord_js_1.MessageEmbed()
