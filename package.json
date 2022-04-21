@@ -7,7 +7,7 @@
     "test": "cd dist && supervisor index.js",
     "compile": "tsc -w"
   },
-  "repository": "https://github.com/alnaimdeo/VennDiagram-v2",
+  "repository": "https://github.com/alanimdeo/VennDiagram-v2",
   "author": "Alanimdeo",
   "license": "MIT",
   "private": true,
