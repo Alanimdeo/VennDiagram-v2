@@ -53,19 +53,20 @@ class Queue {
                 clearTimeout(this.quitTimer);
                 this.quitTimer = null;
             }
-            await this.textChannel.send({
-                embeds: [
-                    new discord_js_1.MessageEmbed()
-                        .setColor("#0067a3")
-                        .setTitle(":arrow_forward: 노래를 재생할게요")
-                        .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)
-                        .setThumbnail(this.songs[0].thumbnail)
-                        .setFooter({
-                        text: `${this.songs[0].requestedUser.displayName} 님이 신청하셨어요.`,
-                        iconURL: this.songs[0].requestedUser.displayAvatarURL(),
-                    }),
-                ],
-            });
+            if (this.repeatMode != "song")
+                await this.textChannel.send({
+                    embeds: [
+                        new discord_js_1.MessageEmbed()
+                            .setColor("#0067a3")
+                            .setTitle(":arrow_forward: 노래를 재생할게요")
+                            .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)
+                            .setThumbnail(this.songs[0].thumbnail)
+                            .setFooter({
+                            text: `${this.songs[0].requestedUser.displayName} 님이 신청하셨어요.`,
+                            iconURL: this.songs[0].requestedUser.displayAvatarURL(),
+                        }),
+                    ],
+                });
         });
     }
     async play(song) {
