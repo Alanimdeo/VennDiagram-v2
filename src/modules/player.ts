@@ -67,7 +67,7 @@ export class Queue {
         this.quitTimer = setTimeout(() => {
           this.connection.destroy();
           this.bot.player.queue.delete(this.voiceChannel.guildId);
-        }, 300000);
+        }, 1_800_000);
       }
     });
     this.audioPlayer.on(AudioPlayerStatus.Playing, async () => {
