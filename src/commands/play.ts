@@ -19,13 +19,17 @@ module.exports = new Command(
     if (!keyword) return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
     let song = undefined;
     if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
-      song = await getInfo(keyword);
-    } else {
-      const result = await search(keyword, 1).catch(async () => {
-        await interaction.editReply("검색 결과가 없어요.");
+      try {
+        song = await getInfo(keyword);
+      } catch (err) {
+        await interaction.editReply("존재하지 않는 영상이에요. 링크를 다시 확인해 주세요.");
         return;
+      }
+    } else {
+      const result = await search(keyword).catch(async () => {
+        return [];
       });
-      if (!result || result[0].type != "video") {
+      if (!result || result.length === 0 || result[0].type != "video") {
         await interaction.editReply("검색 결과가 없어요.");
         return;
       }

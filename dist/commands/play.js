@@ -20,14 +20,19 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
         return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
     let song = undefined;
     if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
-        song = await (0, ytdl_core_1.getInfo)(keyword);
+        try {
+            song = await (0, ytdl_core_1.getInfo)(keyword);
+        }
+        catch (err) {
+            await interaction.editReply("존재하지 않는 영상이에요. 링크를 다시 확인해 주세요.");
+            return;
+        }
     }
     else {
-        const result = await (0, search_1.search)(keyword, 1).catch(async () => {
-            await interaction.editReply("검색 결과가 없어요.");
-            return;
+        const result = await (0, search_1.search)(keyword).catch(async () => {
+            return [];
         });
-        if (!result || result[0].type != "video") {
+        if (!result || result.length === 0 || result[0].type != "video") {
             await interaction.editReply("검색 결과가 없어요.");
             return;
         }
