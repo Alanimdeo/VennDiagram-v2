@@ -1,6 +1,6 @@
 {
   "name": "venndiagram-v2",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A new version of VennDiagram",
   "main": "dist/index.js",
   "scripts": {
