@@ -46,7 +46,6 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
         }
         catch (err) {
             let message = "";
-            console.log(typeof err);
             if (err instanceof Error) {
                 if (err.message === "Timeout") {
                     message = "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.";

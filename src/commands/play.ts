@@ -42,7 +42,6 @@ module.exports = new Command(
         song = await makeChoice(song, interaction, bot);
       } catch (err) {
         let message = "";
-        console.log(typeof err);
         if (err instanceof Error) {
           if (err.message === "Timeout") {
             message = "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.";
