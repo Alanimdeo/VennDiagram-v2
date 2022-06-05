@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 console.log("모듈 불러오는 중...");
 const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
+const readline_1 = require("readline");
 const types_1 = require("./types");
 const config_1 = __importDefault(require("./config"));
 console.log("봇 생성 중...");
@@ -33,6 +34,7 @@ bot.on("interactionCreate", async (interaction) => {
     const command = bot.commands.get(interaction.commandName);
     if (!command)
         return;
+    bot.lastInteraction = interaction;
     await command.execute(interaction, bot);
 });
 bot.on("messageCreate", async (message) => {
@@ -55,6 +57,18 @@ bot.on("voiceStateUpdate", (_, newState) => {
         guildQueue.audioPlayer.stop(true);
         guildQueue.connection.destroy();
         bot.player.queue.delete(newState.guild.id);
+    }
+});
+const consoleInput = (0, readline_1.createInterface)({
+    input: process.stdin,
+    output: process.stdout,
+});
+consoleInput.on("line", async (line) => {
+    try {
+        console.log(eval(line));
+    }
+    catch (err) {
+        console.error(err);
     }
 });
 console.log("로그인 중...");

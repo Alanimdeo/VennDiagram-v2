@@ -9,6 +9,7 @@ class Bot extends discord_js_1.Client {
         this.player = new player_1.Player();
         this.commands = new discord_js_1.Collection();
         this.adminCommands = new discord_js_1.Collection();
+        this.lastInteraction = null;
     }
 }
 exports.Bot = Bot;

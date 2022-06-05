@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection } from "discord.js";
+import { Client, ClientOptions, Collection, Interaction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Player } from "./modules/player";
 
@@ -6,12 +6,14 @@ export class Bot extends Client {
   player: Player;
   commands: Collection<string, Command>;
   adminCommands: Collection<string, Command>;
+  lastInteraction: Interaction | null;
 
   constructor(clientOptions: ClientOptions) {
     super(clientOptions);
     this.player = new Player();
     this.commands = new Collection<string, Command>();
     this.adminCommands = new Collection<string, Command>();
+    this.lastInteraction = null;
   }
 }
 

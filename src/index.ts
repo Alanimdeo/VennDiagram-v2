@@ -1,6 +1,7 @@
 console.log("모듈 불러오는 중...");
 import { Collection, Intents, Interaction, Message, VoiceState } from "discord.js";
 import { readdirSync } from "fs";
+import { createInterface } from "readline";
 import { Bot, Command } from "./types";
 import config from "./config";
 
@@ -35,6 +36,8 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
   const command = bot.commands.get(interaction.commandName);
   if (!command) return;
 
+  bot.lastInteraction = interaction;
+
   await command.execute(interaction, bot);
 });
 
@@ -57,6 +60,19 @@ bot.on("voiceStateUpdate", (_, newState: VoiceState) => {
     guildQueue.audioPlayer.stop(true);
     guildQueue.connection.destroy();
     bot.player.queue.delete(newState.guild.id);
+  }
+});
+
+const consoleInput = createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+consoleInput.on("line", async (line: string) => {
+  try {
+    console.log(eval(line));
+  } catch (err) {
+    console.error(err);
   }
 });
 
