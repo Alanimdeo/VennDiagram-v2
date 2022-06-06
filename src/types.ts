@@ -6,6 +6,7 @@ export class Bot extends Client {
   player: Player;
   commands: Collection<string, Command>;
   adminCommands: Collection<string, Command>;
+  consoleCommands: Collection<string, Command>;
   lastInteraction: Interaction | null;
 
   constructor(clientOptions: ClientOptions) {
@@ -13,6 +14,7 @@ export class Bot extends Client {
     this.player = new Player();
     this.commands = new Collection<string, Command>();
     this.adminCommands = new Collection<string, Command>();
+    this.consoleCommands = new Collection<string, Command>();
     this.lastInteraction = null;
   }
 }

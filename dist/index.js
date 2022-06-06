@@ -59,13 +59,36 @@ bot.on("voiceStateUpdate", (_, newState) => {
         bot.player.queue.delete(newState.guild.id);
     }
 });
+const consoleCommands = (0, fs_1.readdirSync)("./consoleCommands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
+for (const file of consoleCommands) {
+    const command = require(`./consoleCommands/${file}`);
+    console.log(`콘솔 명령어 불러오는 중.. (${command.data.description})`);
+    bot.consoleCommands.set(command.data.name, command);
+}
+const consoleCompletion = bot.consoleCommands.map((command) => command.data.name);
 const consoleInput = (0, readline_1.createInterface)({
     input: process.stdin,
     output: process.stdout,
+    completer: (line) => {
+        const hits = consoleCompletion.filter((c) => c.startsWith(line));
+        return [hits.length ? hits : consoleCompletion, line];
+    },
 });
 consoleInput.on("line", async (line) => {
     try {
-        console.log(eval(line));
+        const commandLine = line.split(" ");
+        if (commandLine.length === 0 || commandLine === undefined)
+            return;
+        const command = bot.consoleCommands.get(commandLine.shift());
+        if (command) {
+            const result = await command.execute(commandLine, bot);
+            if (result) {
+                console.log(result);
+            }
+        }
+        else {
+            console.log(eval(line));
+        }
     }
     catch (err) {
         console.error(err);
