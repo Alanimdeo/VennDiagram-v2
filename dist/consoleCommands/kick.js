@@ -5,7 +5,7 @@ const types_1 = require("../types");
 module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("kick").setDescription("연결 끊기"), async (message, bot) => {
     try {
         if (message.length < 2)
-            return "서버 ID와 멤버 ID를 입력해주세요.";
+            return "서버 ID와 멤버 ID를 정확히 입력해주세요.";
         const guild = await bot.guilds.fetch(message[0]);
         if (!guild)
             return "오류: 서버가 없거나 서버 정보를 불러올 권한이 부족합니다.";
