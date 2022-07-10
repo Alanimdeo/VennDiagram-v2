@@ -13,6 +13,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
         message.reply("```" + String(result) + "```");
     }
     catch (err) {
+        message.reply("```" + String(err) + "```");
         console.error(err);
     }
 });

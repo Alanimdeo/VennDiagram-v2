@@ -96,3 +96,13 @@ consoleInput.on("line", async (line) => {
 });
 console.log("로그인 중...");
 bot.login(config_1.default.token);
+const exit = require("./consoleCommands/exit").execute;
+process.on("SIGINT", async () => {
+    await exit([], bot);
+});
+process.on("SIGTERM", async () => {
+    await exit([], bot);
+});
+process.on("SIGTERM", async () => {
+    await exit([], bot);
+});
