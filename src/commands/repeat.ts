@@ -1,5 +1,4 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
@@ -19,20 +18,21 @@ module.exports = new Command(
     if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let guildQueue = bot.player.queue.get(interaction.guildId || "");
     if (!guildQueue) return await interaction.editReply("재생 목록에 노래가 없어요.");
-    let repeatMode = interaction.options.getString("유형");
-    if (!repeatMode || !(repeatMode === "none" || repeatMode === "song" || repeatMode === "all"))
+    let repeatMode = String(interaction.options.get("유형", true).value);
+    if (!(repeatMode === "none" || repeatMode === "song" || repeatMode === "all"))
       return await interaction.editReply("유형을 선택하세요.");
     guildQueue.repeatMode = repeatMode;
     await interaction.editReply({
       embeds: [
-        new MessageEmbed({
-          color: "#008000",
-          title: `:${repeatMode === "none" ? "arrow_right" : repeatMode === "song" ? "repeat_one" : "repeat"}: ${
-            repeatMode === "none"
-              ? "반복을 껐어요"
-              : "반복 유형을 " + (repeatMode == "song" ? "곡으로" : "전체로") + " 설정했어요"
-          }`,
-        }),
+        new EmbedBuilder()
+          .setColor("#008000")
+          .setTitle(
+            `:${repeatMode === "none" ? "arrow_right" : repeatMode === "song" ? "repeat_one" : "repeat"}: ${
+              repeatMode === "none"
+                ? "반복을 껐어요"
+                : "반복 유형을 " + (repeatMode == "song" ? "곡으로" : "전체로") + " 설정했어요"
+            }`
+          ),
       ],
     });
   }

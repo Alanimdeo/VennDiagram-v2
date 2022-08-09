@@ -1,5 +1,4 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
@@ -23,10 +22,10 @@ module.exports = new Command(
     if (guildQueue.isPlaying) {
       guildQueue.isPlaying = false;
       guildQueue.audioPlayer.pause();
-      let duration = interaction.options.getNumber("시간");
+      let duration = interaction.options.get("시간", false)?.value;
       await interaction.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setColor("#ffff00")
             .setTitle(`:pause_button: 노래를 ${duration ? duration + "초 동안 " : ""}일시정지했어요`)
             .setDescription("`/일시정지` 명령어를 다시 입력하면 재생할 수 있어요."),
@@ -38,13 +37,13 @@ module.exports = new Command(
             guildQueue.isPlaying = true;
             guildQueue.audioPlayer.unpause();
           }
-        }, duration * 1000);
+        }, Number(duration) * 1000);
       }
     } else {
       guildQueue.isPlaying = true;
       guildQueue.audioPlayer.unpause();
       await interaction.editReply({
-        embeds: [new MessageEmbed().setColor("#ffff00").setTitle(":arrow_forward: 일시정지를 해제했어요")],
+        embeds: [new EmbedBuilder().setColor("#ffff00").setTitle(":arrow_forward: 일시정지를 해제했어요")],
       });
     }
   }

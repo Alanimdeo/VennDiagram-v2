@@ -1,5 +1,5 @@
 console.log("모듈 불러오는 중...");
-import { Collection, Intents, Interaction, Message, VoiceState } from "discord.js";
+import { Collection, GatewayIntentBits, Interaction, InteractionType, Message, VoiceState } from "discord.js";
 import { readdirSync } from "fs";
 import { createInterface } from "readline";
 import { Bot, Command } from "./types";
@@ -7,7 +7,12 @@ import config from "./config";
 
 console.log("봇 생성 중...");
 const bot: Bot = new Bot({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent, // 테스트로 추가해봄. 얘 때문에 awaitMessages가 작동 안 했던 건가?
+  ],
 });
 
 const commands = readdirSync("./commands").filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
@@ -31,7 +36,7 @@ bot.once("ready", () => {
 });
 
 bot.on("interactionCreate", async (interaction: Interaction) => {
-  if (!interaction.isCommand()) return;
+  if (interaction.type !== InteractionType.ApplicationCommand) return;
 
   const command = bot.commands.get(interaction.commandName);
   if (!command) return;

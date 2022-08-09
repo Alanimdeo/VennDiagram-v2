@@ -56,7 +56,7 @@ class Queue {
             if (this.repeatMode != "song")
                 await this.textChannel.send({
                     embeds: [
-                        new discord_js_1.MessageEmbed()
+                        new discord_js_1.EmbedBuilder()
                             .setColor("#0067a3")
                             .setTitle(":arrow_forward: 노래를 재생할게요")
                             .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)

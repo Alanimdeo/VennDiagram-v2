@@ -1,4 +1,4 @@
-import { Collection, MessageEmbed, TextBasedChannel, VoiceBasedChannel } from "discord.js";
+import { Collection, EmbedBuilder, TextBasedChannel, VoiceBasedChannel } from "discord.js";
 import {
   AudioPlayer,
   AudioPlayerStatus,
@@ -78,7 +78,7 @@ export class Queue {
       if (this.repeatMode != "song")
         await this.textChannel.send({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setColor("#0067a3")
               .setTitle(":arrow_forward: 노래를 재생할게요")
               .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)

@@ -11,7 +11,12 @@ const types_1 = require("./types");
 const config_1 = __importDefault(require("./config"));
 console.log("봇 생성 중...");
 const bot = new types_1.Bot({
-    intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_VOICE_STATES],
+    intents: [
+        discord_js_1.GatewayIntentBits.Guilds,
+        discord_js_1.GatewayIntentBits.GuildMessages,
+        discord_js_1.GatewayIntentBits.GuildVoiceStates,
+        discord_js_1.GatewayIntentBits.MessageContent, // 테스트로 추가해봄. 얘 때문에 awaitMessages가 작동 안 했던 건가?
+    ],
 });
 const commands = (0, fs_1.readdirSync)("./commands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
@@ -29,7 +34,7 @@ bot.once("ready", () => {
     console.log(`준비 완료! 토큰: \x1b[32m${config_1.default.token}\x1b[0m`);
 });
 bot.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand())
+    if (interaction.type !== discord_js_1.InteractionType.ApplicationCommand)
         return;
     const command = bot.commands.get(interaction.commandName);
     if (!command)

@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const builders_1 = require("@discordjs/builders");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("목록").setDescription("재생 목록을 확인합니다."), async (interaction, bot) => {
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("목록").setDescription("재생 목록을 확인합니다."), async (interaction, bot) => {
     await interaction.deferReply();
     let message = "";
     let guildQueue = bot.player.queue.get(interaction.guildId || "");
@@ -22,11 +21,10 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
         : "";
     await interaction.editReply({
         embeds: [
-            new discord_js_1.MessageEmbed({
-                color: "#0067a3",
-                title: `:scroll: ${interaction.guild?.name}의 재생 목록${repeatMode}`,
-                description: message.slice(1),
-            }),
+            new discord_js_1.EmbedBuilder()
+                .setColor("#0067a3")
+                .setTitle(`:scroll: ${interaction.guild?.name}의 재생 목록${repeatMode}`)
+                .setDescription(message.slice(1)),
         ],
     });
 });

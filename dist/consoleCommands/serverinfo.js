@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("serverinfo").setDescription("서버 정보"), async (message, bot) => {
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("serverinfo").setDescription("서버 정보"), async (message, bot) => {
     try {
         if (message.length === 0)
             return "서버 ID를 입력해주세요.";

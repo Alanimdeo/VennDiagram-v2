@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const builders_1 = require("@discordjs/builders");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("일시정지")
     .setDescription("음악을 일시정지합니다.")
     .addNumberOption((option) => option
@@ -21,10 +20,10 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     if (guildQueue.isPlaying) {
         guildQueue.isPlaying = false;
         guildQueue.audioPlayer.pause();
-        let duration = interaction.options.getNumber("시간");
+        let duration = interaction.options.get("시간", false)?.value;
         await interaction.editReply({
             embeds: [
-                new discord_js_1.MessageEmbed()
+                new discord_js_1.EmbedBuilder()
                     .setColor("#ffff00")
                     .setTitle(`:pause_button: 노래를 ${duration ? duration + "초 동안 " : ""}일시정지했어요`)
                     .setDescription("`/일시정지` 명령어를 다시 입력하면 재생할 수 있어요."),
@@ -36,14 +35,14 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
                     guildQueue.isPlaying = true;
                     guildQueue.audioPlayer.unpause();
                 }
-            }, duration * 1000);
+            }, Number(duration) * 1000);
         }
     }
     else {
         guildQueue.isPlaying = true;
         guildQueue.audioPlayer.unpause();
         await interaction.editReply({
-            embeds: [new discord_js_1.MessageEmbed().setColor("#ffff00").setTitle(":arrow_forward: 일시정지를 해제했어요")],
+            embeds: [new discord_js_1.EmbedBuilder().setColor("#ffff00").setTitle(":arrow_forward: 일시정지를 해제했어요")],
         });
     }
 });

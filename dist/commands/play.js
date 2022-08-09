@@ -1,13 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const builders_1 = require("@discordjs/builders");
 const ytdl_core_1 = require("ytdl-core");
 const search_1 = require("../modules/search");
 const song_1 = require("../modules/song");
 const player_1 = require("../modules/player");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("재생")
     .setDescription("노래를 재생합니다.")
     .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(true)), async (interaction, bot) => {
@@ -15,9 +14,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     let author = interaction.member;
     if (!author.voice.channel)
         return await interaction.editReply("먼저 음성 채널에 참가하세요.");
-    let keyword = interaction.options.getString("제목");
-    if (!keyword)
-        return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
+    let keyword = String(interaction.options.get("제목", true).value);
     let song = undefined;
     if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
         try {
@@ -75,7 +72,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     await interaction.editReply({
         content: null,
         embeds: [
-            new discord_js_1.MessageEmbed()
+            new discord_js_1.EmbedBuilder()
                 .setColor("#008000")
                 .setTitle(":white_check_mark: 곡을 추가했어요")
                 .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration})`)
