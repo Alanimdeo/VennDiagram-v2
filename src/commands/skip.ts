@@ -1,5 +1,4 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
@@ -14,7 +13,7 @@ module.exports = new Command(
     if (guildQueue.songs.length !== 0) guildQueue.play(guildQueue.songs[0]);
     else guildQueue.audioPlayer.stop();
     await interaction.editReply({
-      embeds: [new MessageEmbed().setColor("#008000").setTitle(":fast_forward: 곡을 스킵했어요")],
+      embeds: [new EmbedBuilder().setColor("#008000").setTitle(":fast_forward: 곡을 스킵했어요")],
     });
   }
 );

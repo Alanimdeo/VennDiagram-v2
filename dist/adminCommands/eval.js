@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("eval").setDescription("명령 실행"), async (message, bot) => {
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("eval").setDescription("명령 실행"), async (message, bot) => {
     try {
         let command = message.content.split(" ");
         command.shift();

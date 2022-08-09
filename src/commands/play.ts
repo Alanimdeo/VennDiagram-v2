@@ -1,6 +1,5 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { getInfo, videoInfo } from "ytdl-core";
+import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
+import { getInfo } from "ytdl-core";
 import { makeChoice, search } from "../modules/search";
 import { Song } from "../modules/song";
 import { Queue } from "../modules/player";
@@ -15,8 +14,7 @@ module.exports = new Command(
     await interaction.deferReply();
     let author: GuildMember = interaction.member as GuildMember;
     if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");
-    let keyword = interaction.options.getString("제목");
-    if (!keyword) return await interaction.editReply("오류가 발생하였습니다! 로그를 참조하세요.");
+    let keyword = String(interaction.options.get("제목", true).value);
     let song = undefined;
     if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
       try {
@@ -67,7 +65,7 @@ module.exports = new Command(
     await interaction.editReply({
       content: null,
       embeds: [
-        new MessageEmbed()
+        new EmbedBuilder()
           .setColor("#008000")
           .setTitle(":white_check_mark: 곡을 추가했어요")
           .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration})`)

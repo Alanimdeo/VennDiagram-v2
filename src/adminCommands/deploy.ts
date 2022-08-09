@@ -1,5 +1,4 @@
-import { ApplicationCommandDataResolvable, Message } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { ApplicationCommandDataResolvable, Message, SlashCommandBuilder } from "discord.js";
 import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v9";
 import { Bot, Command } from "../types";
 

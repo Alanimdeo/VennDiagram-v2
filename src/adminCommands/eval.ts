@@ -1,5 +1,4 @@
-import { Message } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { Message, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(

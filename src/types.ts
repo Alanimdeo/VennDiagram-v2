@@ -1,5 +1,4 @@
-import { Client, ClientOptions, Collection, Interaction } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { Client, ClientOptions, Collection, Interaction, SlashCommandBuilder } from "discord.js";
 import { Player } from "./modules/player";
 
 export class Bot extends Client {

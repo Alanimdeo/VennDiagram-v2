@@ -1,5 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { Song } from "../modules/song";
 import { Bot, Command } from "../types";
 
@@ -24,11 +23,10 @@ module.exports = new Command(
       : "";
     await interaction.editReply({
       embeds: [
-        new MessageEmbed({
-          color: "#0067a3",
-          title: `:scroll: ${interaction.guild?.name}의 재생 목록${repeatMode}`,
-          description: message.slice(1),
-        }),
+        new EmbedBuilder()
+          .setColor("#0067a3")
+          .setTitle(`:scroll: ${interaction.guild?.name}의 재생 목록${repeatMode}`)
+          .setDescription(message.slice(1)),
       ],
     });
   }
