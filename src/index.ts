@@ -11,7 +11,7 @@ const bot: Bot = new Bot({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.MessageContent, // 테스트로 추가해봄. 얘 때문에 awaitMessages가 작동 안 했던 건가?
+    GatewayIntentBits.MessageContent,
   ],
 });
 
@@ -72,12 +72,12 @@ const consoleCommands = readdirSync("./consoleCommands").filter(
   (file: string) => file.endsWith(".js") || file.endsWith(".ts")
 );
 for (const file of consoleCommands) {
-  const command: Command = require(`./consoleCommands/${file}`);
+  const command: Command<string[]> = require(`./consoleCommands/${file}`);
   console.log(`콘솔 명령어 불러오는 중.. (${command.data.description})`);
   bot.consoleCommands.set(command.data.name, command);
 }
 
-const consoleCompletion = bot.consoleCommands.map((command: Command) => command.data.name);
+const consoleCompletion = bot.consoleCommands.map((command: Command<string[]>) => command.data.name);
 
 const consoleInput = createInterface({
   input: process.stdin,
@@ -106,16 +106,11 @@ consoleInput.on("line", async (line: string) => {
   }
 });
 
+const exit = (require("./consoleCommands/exit") as Command<string[]>).execute;
+
+consoleInput.on("SIGINT", async () => {
+  await exit([], bot);
+});
+
 console.log("로그인 중...");
 bot.login(config.token);
-
-const exit = (require("./consoleCommands/exit") as Command).execute;
-process.on("SIGINT", async () => {
-  await exit([], bot);
-});
-process.on("SIGTERM", async () => {
-  await exit([], bot);
-});
-process.on("SIGTERM", async () => {
-  await exit([], bot);
-});

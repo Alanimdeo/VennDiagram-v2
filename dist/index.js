@@ -15,7 +15,7 @@ const bot = new types_1.Bot({
         discord_js_1.GatewayIntentBits.Guilds,
         discord_js_1.GatewayIntentBits.GuildMessages,
         discord_js_1.GatewayIntentBits.GuildVoiceStates,
-        discord_js_1.GatewayIntentBits.MessageContent, // 테스트로 추가해봄. 얘 때문에 awaitMessages가 작동 안 했던 건가?
+        discord_js_1.GatewayIntentBits.MessageContent,
     ],
 });
 const commands = (0, fs_1.readdirSync)("./commands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
@@ -99,15 +99,9 @@ consoleInput.on("line", async (line) => {
         console.error(err);
     }
 });
+const exit = require("./consoleCommands/exit").execute;
+consoleInput.on("SIGINT", async () => {
+    await exit([], bot);
+});
 console.log("로그인 중...");
 bot.login(config_1.default.token);
-const exit = require("./consoleCommands/exit").execute;
-process.on("SIGINT", async () => {
-    await exit([], bot);
-});
-process.on("SIGTERM", async () => {
-    await exit([], bot);
-});
-process.on("SIGTERM", async () => {
-    await exit([], bot);
-});
