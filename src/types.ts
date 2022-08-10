@@ -1,11 +1,19 @@
-import { Client, ClientOptions, Collection, Interaction, SlashCommandBuilder } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Collection,
+  CommandInteraction,
+  Interaction,
+  Message,
+  SlashCommandBuilder,
+} from "discord.js";
 import { Player } from "./modules/player";
 
 export class Bot extends Client {
   player: Player;
-  commands: Collection<string, Command>;
-  adminCommands: Collection<string, Command>;
-  consoleCommands: Collection<string, Command>;
+  commands: Collection<string, Command<CommandInteraction>>;
+  adminCommands: Collection<string, Command<Message>>;
+  consoleCommands: Collection<string, Command<string[]>>;
   lastInteraction: Interaction | null;
 
   constructor(clientOptions: ClientOptions) {
@@ -18,11 +26,13 @@ export class Bot extends Client {
   }
 }
 
-export class Command {
-  data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">;
-  execute: Function;
+export type CommandExecutable<T = CommandInteraction | Message | string[]> = (input: T, bot: Bot) => Promise<any>;
 
-  constructor(data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">, execute: Function) {
+export class Command<T = CommandInteraction | Message | string[]> {
+  data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">;
+  execute: CommandExecutable<T>;
+
+  constructor(data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">, execute: CommandExecutable<T>) {
     this.data = data;
     this.execute = execute;
   }
