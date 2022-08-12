@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
@@ -12,7 +12,7 @@ module.exports = new Command(
         .setMinValue(0.5)
         .setRequired(false)
     ),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
     let author: GuildMember = interaction.member as GuildMember;
     if (!author.voice.channel || !interaction.guildId)
@@ -22,7 +22,7 @@ module.exports = new Command(
     if (guildQueue.isPlaying) {
       guildQueue.isPlaying = false;
       guildQueue.audioPlayer.pause();
-      let duration = interaction.options.get("시간", false)?.value;
+      let duration = interaction.options.getNumber("시간", false);
       await interaction.editReply({
         embeds: [
           new EmbedBuilder()

@@ -20,7 +20,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     if (guildQueue.isPlaying) {
         guildQueue.isPlaying = false;
         guildQueue.audioPlayer.pause();
-        let duration = interaction.options.get("시간", false)?.value;
+        let duration = interaction.options.getNumber("시간", false);
         await interaction.editReply({
             embeds: [
                 new discord_js_1.EmbedBuilder()

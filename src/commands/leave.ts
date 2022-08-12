@@ -1,9 +1,9 @@
-import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("퇴장").setDescription("봇을 음성 채널에서 퇴장시킵니다."),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
     let author = interaction.member as GuildMember;
     if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");

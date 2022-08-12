@@ -14,7 +14,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     let author = interaction.member;
     if (!author.voice.channel)
         return await interaction.editReply("먼저 음성 채널에 참가하세요.");
-    let keyword = String(interaction.options.get("제목", true).value);
+    let keyword = interaction.options.getString("제목", true);
     let song = undefined;
     if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
         try {
@@ -39,7 +39,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         return await interaction.editReply("검색 결과가 없어요.");
     if (song instanceof Array) {
         try {
-            song = await (0, search_1.makeChoice)(song, interaction, bot);
+            song = await (0, search_1.makeChoice)(song, interaction);
         }
         catch (err) {
             let message = "";

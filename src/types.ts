@@ -2,7 +2,7 @@ import {
   Client,
   ClientOptions,
   Collection,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Interaction,
   Message,
   SlashCommandBuilder,
@@ -11,7 +11,7 @@ import { Player } from "./modules/player";
 
 export class Bot extends Client {
   player: Player;
-  commands: Collection<string, Command<CommandInteraction>>;
+  commands: Collection<string, Command<ChatInputCommandInteraction>>;
   adminCommands: Collection<string, Command<Message>>;
   consoleCommands: Collection<string, Command<string[]>>;
   lastInteraction: Interaction | null;
@@ -26,9 +26,12 @@ export class Bot extends Client {
   }
 }
 
-export type CommandExecutable<T = CommandInteraction | Message | string[]> = (input: T, bot: Bot) => Promise<any>;
+export type CommandExecutable<T = ChatInputCommandInteraction | Message | string[]> = (
+  input: T,
+  bot: Bot
+) => Promise<any>;
 
-export class Command<T = CommandInteraction | Message | string[]> {
+export class Command<T = ChatInputCommandInteraction | Message | string[]> {
   data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">;
   execute: CommandExecutable<T>;
 

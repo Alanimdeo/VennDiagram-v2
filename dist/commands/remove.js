@@ -13,7 +13,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue || guildQueue.songs.length === 0)
         return await interaction.editReply("재생 목록에 노래가 없어요.");
-    let removeNumber = Number(interaction.options.get("번호", true).value);
+    let removeNumber = interaction.options.getInteger("번호", true);
     if (removeNumber - 1 > guildQueue.songs.length)
         return await interaction.editReply("선택한 번호가 없어요.");
     guildQueue.songs.splice(removeNumber - 1, 1);
