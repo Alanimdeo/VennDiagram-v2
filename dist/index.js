@@ -34,7 +34,7 @@ bot.once("ready", () => {
     console.log(`준비 완료! 토큰: \x1b[32m${config_1.default.token}\x1b[0m`);
 });
 bot.on("interactionCreate", async (interaction) => {
-    if (interaction.type !== discord_js_1.InteractionType.ApplicationCommand)
+    if (!interaction.isChatInputCommand())
         return;
     const command = bot.commands.get(interaction.commandName);
     if (!command)

@@ -33,7 +33,7 @@ async function search(keyword, limit = 5) {
     });
 }
 exports.search = search;
-async function makeChoice(searchResult, interaction, bot) {
+async function makeChoice(searchResult, interaction) {
     return new Promise(async (resolve, reject) => {
         try {
             let question = "**:scroll: 노래를 선택해 주세요.**";

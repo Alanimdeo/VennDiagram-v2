@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getInfo } from "ytdl-core";
 import { makeChoice, search } from "../modules/search";
 import { Song } from "../modules/song";
@@ -10,11 +10,11 @@ module.exports = new Command(
     .setName("재생")
     .setDescription("노래를 재생합니다.")
     .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(true)),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
     let author: GuildMember = interaction.member as GuildMember;
     if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");
-    let keyword = String(interaction.options.get("제목", true).value);
+    let keyword = interaction.options.getString("제목", true);
     let song = undefined;
     if (/(http|https):\/\/(youtu\.be\/|(www\.|)youtube\.com\/watch\?(v|vi)=)[A-Za-z0-9_\-]+/.test(keyword)) {
       try {
@@ -37,7 +37,7 @@ module.exports = new Command(
       return await interaction.editReply("검색 결과가 없어요.");
     if (song instanceof Array) {
       try {
-        song = await makeChoice(song, interaction, bot);
+        song = await makeChoice(song, interaction);
       } catch (err) {
         let message = "";
         if (err instanceof Error) {

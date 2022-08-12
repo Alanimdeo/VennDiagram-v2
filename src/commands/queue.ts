@@ -1,10 +1,10 @@
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { Song } from "../modules/song";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("목록").setDescription("재생 목록을 확인합니다."),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
     let message = "";
     let guildQueue = bot.player.queue.get(interaction.guildId || "");

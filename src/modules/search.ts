@@ -1,4 +1,4 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember } from "discord.js";
 import { getInfo, videoInfo } from "ytdl-core";
 import ytsr from "ytsr";
 import { Bot } from "../types";
@@ -30,8 +30,7 @@ export async function search(keyword: string, limit: number = 5): Promise<ytsr.I
 
 export async function makeChoice(
   searchResult: ytsr.Item[],
-  interaction: CommandInteraction,
-  bot: Bot
+  interaction: ChatInputCommandInteraction
 ): Promise<videoInfo> {
   return new Promise(async (resolve, reject) => {
     try {

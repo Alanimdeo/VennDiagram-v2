@@ -17,7 +17,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     let guildQueue = bot.player.queue.get(interaction.guildId || "");
     if (!guildQueue)
         return await interaction.editReply("재생 목록에 노래가 없어요.");
-    let repeatMode = String(interaction.options.get("유형", true).value);
+    let repeatMode = interaction.options.getString("유형", true);
     if (!(repeatMode === "none" || repeatMode === "song" || repeatMode === "all"))
         return await interaction.editReply("유형을 선택하세요.");
     guildQueue.repeatMode = repeatMode;

@@ -36,7 +36,7 @@ bot.once("ready", () => {
 });
 
 bot.on("interactionCreate", async (interaction: Interaction) => {
-  if (interaction.type !== InteractionType.ApplicationCommand) return;
+  if (!interaction.isChatInputCommand()) return;
 
   const command = bot.commands.get(interaction.commandName);
   if (!command) return;
