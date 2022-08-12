@@ -1,4 +1,4 @@
-console.log("모듈 불러오는 중...");
+console.log(`봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`);
 import { Collection, GatewayIntentBits, Interaction, InteractionType, Message, VoiceState } from "discord.js";
 import { readdirSync } from "fs";
 import { createInterface } from "readline";
