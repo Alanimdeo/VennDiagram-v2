@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, Collection, GuildMember } from "discord.js";
 import { getInfo, videoInfo } from "ytdl-core";
 import ytsr from "ytsr";
 import { Bot } from "../types";
@@ -56,15 +56,19 @@ export async function makeChoice(
         time: 30000,
         errors: ["time"],
       });
-      if (!message || !message.first()) return reject(new Error("timeout"));
+      if (!message || !message.first()) return reject(new Error("Timeout"));
       const choice = Number(message.first()?.content) - 1;
       if (isNaN(choice) || choice < 0 || choice > 4) return reject(new Error("invalidChoice"));
       const result = searchResult[choice];
       if (!result || result.type != "video") return reject(new Error("invalidResult"));
       await interaction.editReply("곡을 추가하는 중이에요.");
-      return resolve(await getInfo(result.url));
+      const songInfo = await getInfo(result.url);
+      return resolve(songInfo);
     } catch (err) {
-      return reject(new Error("Timeout"));
+      if (err instanceof Collection) {
+        return reject(new Error("Timeout"));
+      }
+      return reject(err);
     }
   });
 }

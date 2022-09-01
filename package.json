@@ -1,6 +1,6 @@
 {
   "name": "venndiagram-v2",
-  "version": "2.7.3",
+  "version": "2.7.4",
   "description": "A new version of VennDiagram",
   "main": "dist/index.js",
   "scripts": {
@@ -12,8 +12,8 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/voice": "^0.11.0",
-    "discord-api-types": "^0.37.1",
-    "discord.js": "^14.1.2",
+    "discord-api-types": "^0.37.5",
+    "discord.js": "^14.3.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "libsodium-wrappers": "^0.7.10",
@@ -21,11 +21,11 @@
     "prism-media": "^1.3.4",
     "sodium": "^3.0.2",
     "youtube-dl-exec": "^2.1.5",
-    "ytdl-core": "^4.11.0",
+    "ytdl-core": "^4.11.1",
     "ytsr": "^3.8.0"
   },
   "devDependencies": {
     "supervisor": "^0.12.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.8.2"
   }
 }

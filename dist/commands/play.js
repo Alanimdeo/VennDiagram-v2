@@ -55,6 +55,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
                 }
             }
             else {
+                console.error(err);
                 message = "알 수 없는 오류입니다. 개발자에게 문의하세요.";
             }
             return await interaction.editReply(message);

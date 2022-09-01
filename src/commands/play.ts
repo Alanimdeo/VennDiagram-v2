@@ -49,6 +49,7 @@ module.exports = new Command(
             message = "곡 정보를 받아올 수 없어요. 다시 시도해 주세요.";
           }
         } else {
+          console.error(err);
           message = "알 수 없는 오류입니다. 개발자에게 문의하세요.";
         }
         return await interaction.editReply(message);

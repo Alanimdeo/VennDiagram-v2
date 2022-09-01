@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeChoice = exports.search = void 0;
+const discord_js_1 = require("discord.js");
 const ytdl_core_1 = require("ytdl-core");
 const ytsr_1 = __importDefault(require("ytsr"));
 // const musicFilter = ["[mv]", "mv", "music video", "가사", "lyrics"];
@@ -59,7 +60,7 @@ async function makeChoice(searchResult, interaction) {
                 errors: ["time"],
             });
             if (!message || !message.first())
-                return reject(new Error("timeout"));
+                return reject(new Error("Timeout"));
             const choice = Number(message.first()?.content) - 1;
             if (isNaN(choice) || choice < 0 || choice > 4)
                 return reject(new Error("invalidChoice"));
@@ -67,10 +68,14 @@ async function makeChoice(searchResult, interaction) {
             if (!result || result.type != "video")
                 return reject(new Error("invalidResult"));
             await interaction.editReply("곡을 추가하는 중이에요.");
-            return resolve(await (0, ytdl_core_1.getInfo)(result.url));
+            const songInfo = await (0, ytdl_core_1.getInfo)(result.url);
+            return resolve(songInfo);
         }
         catch (err) {
-            return reject(new Error("Timeout"));
+            if (err instanceof discord_js_1.Collection) {
+                return reject(new Error("Timeout"));
+            }
+            return reject(err);
         }
     });
 }
