@@ -106,11 +106,5 @@ consoleInput.on("line", async (line: string) => {
   }
 });
 
-const exit = (require("./consoleCommands/exit") as Command<string[]>).execute;
-
-consoleInput.on("SIGINT", async () => {
-  await exit([], bot);
-});
-
 console.log("로그인 중...");
 bot.login(config.token);

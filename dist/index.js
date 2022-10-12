@@ -99,9 +99,5 @@ consoleInput.on("line", async (line) => {
         console.error(err);
     }
 });
-const exit = require("./consoleCommands/exit").execute;
-consoleInput.on("SIGINT", async () => {
-    await exit([], bot);
-});
 console.log("로그인 중...");
 bot.login(config_1.default.token);
