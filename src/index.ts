@@ -106,5 +106,11 @@ consoleInput.on("line", async (line: string) => {
   }
 });
 
+consoleInput.on("SIGINT", () => {
+  console.log("종료 중...");
+  bot.destroy();
+  process.exit();
+});
+
 console.log("로그인 중...");
 bot.login(config.token);

@@ -1,5 +1,5 @@
 import { Message, SlashCommandBuilder } from "discord.js";
-import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v9";
+import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
 import { Bot, Command } from "../types";
 
 module.exports = new Command(
