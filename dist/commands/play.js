@@ -16,7 +16,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let keyword = interaction.options.getString("제목", true);
     let song;
-    if (/((http|https):\/\/)?(youtu\.be\/|(www\.|)youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(keyword)) {
+    if (/((http|https):\/\/)?(youtu\.be\/(shorts\/)?|(www\.)?youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(keyword)) {
         try {
             song = await (0, ytdl_core_1.getInfo)(keyword);
         }

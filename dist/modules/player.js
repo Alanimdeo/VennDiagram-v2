@@ -14,12 +14,6 @@ class Player {
 }
 exports.Player = Player;
 class Queue {
-    async play(song) {
-        let probe = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }));
-        this.audioPlayer.play((0, voice_1.createAudioResource)(probe.stream, { inputType: probe.type }));
-        this.connection.subscribe(this.audioPlayer);
-        this.isPlaying = true;
-    }
     constructor(textChannel, voiceChannel, bot) {
         this.bot = bot;
         this.textChannel = textChannel;
@@ -74,6 +68,12 @@ class Queue {
                     ],
                 });
         });
+    }
+    async play(song) {
+        let probe = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }));
+        this.audioPlayer.play((0, voice_1.createAudioResource)(probe.stream, { inputType: probe.type }));
+        this.connection.subscribe(this.audioPlayer);
+        this.isPlaying = true;
     }
 }
 exports.Queue = Queue;

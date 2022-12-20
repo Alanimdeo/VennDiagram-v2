@@ -17,7 +17,7 @@ module.exports = new Command(
     let keyword = interaction.options.getString("제목", true);
     let song;
     if (
-      /((http|https):\/\/)?(youtu\.be\/|(www\.|)youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(
+      /((http|https):\/\/)?(youtu\.be\/(shorts\/)?|(www\.)?youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(
         keyword
       )
     ) {
