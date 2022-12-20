@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 console.log(`봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`);
 const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
-const readline_1 = require("readline");
 const types_1 = require("./types");
 const config_1 = __importDefault(require("./config"));
 console.log("봇 생성 중...");
@@ -64,45 +63,12 @@ bot.on("voiceStateUpdate", (_, newState) => {
         bot.player.queue.delete(newState.guild.id);
     }
 });
-const consoleCommands = (0, fs_1.readdirSync)("./consoleCommands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
-for (const file of consoleCommands) {
-    const command = require(`./consoleCommands/${file}`);
-    console.log(`콘솔 명령어 불러오는 중.. (${command.data.description})`);
-    bot.consoleCommands.set(command.data.name, command);
-}
-const consoleCompletion = bot.consoleCommands.map((command) => command.data.name);
-const consoleInput = (0, readline_1.createInterface)({
-    input: process.stdin,
-    output: process.stdout,
-    completer: (line) => {
-        const hits = consoleCompletion.filter((c) => c.startsWith(line));
-        return [hits.length ? hits : consoleCompletion, line];
-    },
-});
-consoleInput.on("line", async (line) => {
-    try {
-        const commandLine = line.split(" ");
-        if (commandLine.length === 0 || commandLine === undefined)
-            return;
-        const command = bot.consoleCommands.get(commandLine.shift());
-        if (command) {
-            const result = await command.execute(commandLine, bot);
-            if (result) {
-                console.log(result);
-            }
-        }
-        else {
-            console.log(eval(line));
-        }
-    }
-    catch (err) {
-        console.error(err);
-    }
-});
-consoleInput.on("SIGINT", () => {
+process.on("SIGINT", exit);
+process.on("SIGTERM", exit);
+function exit() {
     console.log("종료 중...");
     bot.destroy();
-    process.exit();
-});
+    process.exit(0);
+}
 console.log("로그인 중...");
 bot.login(config_1.default.token);
