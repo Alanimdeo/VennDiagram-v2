@@ -9,6 +9,12 @@ import {
 } from "discord.js";
 import { Player } from "./modules/player";
 
+export interface Config {
+  token: string;
+  adminPrefix: string;
+  admins: string[];
+}
+
 export class Bot extends Client {
   player: Player;
   commands: Collection<string, Command<ChatInputCommandInteraction>>;
