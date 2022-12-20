@@ -1,7 +1,6 @@
 console.log(`봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`);
 import { Collection, GatewayIntentBits, Message, VoiceState } from "discord.js";
 import { readdirSync } from "fs";
-import { createInterface } from "readline";
 import { Bot, Command } from "./types";
 import config from "./config";
 
@@ -68,49 +67,14 @@ bot.on("voiceStateUpdate", (_, newState: VoiceState) => {
   }
 });
 
-const consoleCommands = readdirSync("./consoleCommands").filter(
-  (file: string) => file.endsWith(".js") || file.endsWith(".ts")
-);
-for (const file of consoleCommands) {
-  const command: Command<string[]> = require(`./consoleCommands/${file}`);
-  console.log(`콘솔 명령어 불러오는 중.. (${command.data.description})`);
-  bot.consoleCommands.set(command.data.name, command);
-}
+process.on("SIGINT", exit);
+process.on("SIGTERM", exit);
 
-const consoleCompletion = bot.consoleCommands.map((command: Command<string[]>) => command.data.name);
-
-const consoleInput = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  completer: (line: string) => {
-    const hits = consoleCompletion.filter((c) => c.startsWith(line));
-    return [hits.length ? hits : consoleCompletion, line];
-  },
-});
-
-consoleInput.on("line", async (line: string) => {
-  try {
-    const commandLine = line.split(" ");
-    if (commandLine.length === 0 || commandLine === undefined) return;
-    const command = bot.consoleCommands.get(commandLine.shift() as string);
-    if (command) {
-      const result = await command.execute(commandLine, bot);
-      if (result) {
-        console.log(result);
-      }
-    } else {
-      console.log(eval(line));
-    }
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-consoleInput.on("SIGINT", () => {
+function exit() {
   console.log("종료 중...");
   bot.destroy();
-  process.exit();
-});
+  process.exit(0);
+}
 
 console.log("로그인 중...");
 bot.login(config.token);
