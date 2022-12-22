@@ -35,29 +35,32 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         }
         song = result;
     }
-    if (!song || !interaction.guildId || !interaction.channel || !interaction.member || !(song instanceof Array))
+    if (!song || !interaction.guildId || !interaction.channel || !interaction.member) {
         return await interaction.editReply("검색 결과가 없어요.");
-    try {
-        song = await (0, search_1.makeChoice)(song, interaction);
     }
-    catch (err) {
-        let message = "";
-        if (err instanceof Error) {
-            if (err.message === "Timeout") {
-                message = "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.";
-            }
-            else if (err.message === "invalidChoice") {
-                message = "1~5 사이의 숫자만 입력해 주세요.";
-            }
-            else if (err.message === "invalidResult") {
-                message = "곡 정보를 받아올 수 없어요. 다시 시도해 주세요.";
-            }
+    if (Array.isArray(song)) {
+        try {
+            song = await (0, search_1.makeChoice)(song, interaction);
         }
-        else {
-            console.error(err);
-            message = "알 수 없는 오류입니다. 개발자에게 문의하세요.";
+        catch (err) {
+            let message = "";
+            if (err instanceof Error) {
+                if (err.message === "Timeout") {
+                    message = "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.";
+                }
+                else if (err.message === "invalidChoice") {
+                    message = "1~5 사이의 숫자만 입력해 주세요.";
+                }
+                else if (err.message === "invalidResult") {
+                    message = "곡 정보를 받아올 수 없어요. 다시 시도해 주세요.";
+                }
+            }
+            else {
+                console.error(err);
+                message = "알 수 없는 오류입니다. 개발자에게 문의하세요.";
+            }
+            return await interaction.editReply(message);
         }
-        return await interaction.editReply(message);
     }
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) {
