@@ -13,7 +13,13 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setN
     if (!guildQueue)
         return await interaction.editReply("봇이 음성 채널에 참가 중이지 않아요.");
     guildQueue.audioPlayer.stop(true);
-    guildQueue.connection.destroy();
+    try {
+        guildQueue.connection.destroy();
+    }
+    catch (err) {
+        if (err.message !== "Cannot destroy VoiceConnection - it has already been destroyed")
+            throw err;
+    }
     bot.player.queue.delete(interaction.guildId);
     await interaction.editReply({
         embeds: [new discord_js_1.EmbedBuilder().setColor("#008000").setTitle(":eject: 음성 채널에서 퇴장했어요")],

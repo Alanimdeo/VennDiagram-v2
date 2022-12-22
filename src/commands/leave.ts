@@ -11,7 +11,11 @@ module.exports = new Command(
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) return await interaction.editReply("봇이 음성 채널에 참가 중이지 않아요.");
     guildQueue.audioPlayer.stop(true);
-    guildQueue.connection.destroy();
+    try {
+      guildQueue.connection.destroy();
+    } catch (err: any) {
+      if (err.message !== "Cannot destroy VoiceConnection - it has already been destroyed") throw err;
+    }
     bot.player.queue.delete(interaction.guildId);
     await interaction.editReply({
       embeds: [new EmbedBuilder().setColor("#008000").setTitle(":eject: 음성 채널에서 퇴장했어요")],
