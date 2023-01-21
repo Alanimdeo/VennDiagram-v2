@@ -16,6 +16,7 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let keyword = interaction.options.getString("제목", true);
     let song;
+    let startFrom = 0;
     if (/((http|https):\/\/)?(youtu\.be\/(shorts\/)?|(www\.)?youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(keyword)) {
         try {
             song = await (0, ytdl_core_1.getInfo)(keyword);
@@ -23,6 +24,39 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         catch (err) {
             await interaction.editReply("존재하지 않는 영상이에요. 링크를 다시 확인해 주세요.");
             return;
+        }
+        if (/(\?|&)t=[0-9]+(s)?/.test(keyword)) {
+            await interaction.editReply("시간이 지정되어 있어요. 어떻게 할까요?\n\n1: 처음부터 재생\n2: 지정된 시간부터 재생");
+            const message = await interaction.channel?.awaitMessages({
+                filter: async (message) => {
+                    if (message.author.id === interaction.member.id &&
+                        message.channelId == interaction.channelId) {
+                        await message.delete();
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                },
+                max: 1,
+                time: 30000,
+                errors: ["time"],
+            });
+            if (!message || !message.first()) {
+                await interaction.editReply("시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.");
+                return;
+            }
+            const choice = message.first()?.content;
+            if (choice === "1") {
+                startFrom = 0;
+            }
+            else if (choice === "2") {
+                startFrom = Number(/(\?|&)t=([0-9]+)(s)?/.exec(keyword)[2]);
+            }
+            else {
+                await interaction.editReply("1 또는 2만 입력해 주세요.");
+                return;
+            }
         }
     }
     else {
@@ -69,16 +103,16 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     }
     if (!guildQueue)
         return;
-    guildQueue.songs.push(new song_1.Song(song, interaction.member));
-    let lastSong = guildQueue.songs[guildQueue.songs.length - 1];
+    const newSong = new song_1.Song(song, startFrom, interaction.member);
+    guildQueue.songs.push(newSong);
     await interaction.editReply({
         content: null,
         embeds: [
             new discord_js_1.EmbedBuilder()
                 .setColor("#008000")
                 .setTitle(":white_check_mark: 곡을 추가했어요")
-                .setDescription(`[${lastSong.title}](${lastSong.url}) (${lastSong.duration})`)
-                .setThumbnail(lastSong.thumbnail),
+                .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
+                .setThumbnail(newSong.thumbnail),
         ],
     });
     if (!guildQueue.isPlaying) {
