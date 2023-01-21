@@ -8,9 +8,11 @@ import {
   DiscordGatewayAdapterCreator,
   joinVoiceChannel,
   NoSubscriberBehavior,
+  ProbeInfo,
   VoiceConnection,
 } from "@discordjs/voice";
 import ytdl from "ytdl-core";
+import { getPartialAudio } from "./partialAudio";
 import { Song } from "./song";
 import { Bot } from "../types";
 
@@ -33,8 +35,22 @@ export class Queue {
   repeatMode: "none" | "song" | "all";
   audioPlayer: AudioPlayer;
   async play(song: Song) {
-    let probe = await demuxProbe(ytdl(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }));
-    this.audioPlayer.play(createAudioResource(probe.stream, { inputType: probe.type }));
+    let probe: ProbeInfo;
+    if (song.startFrom) {
+      probe = await demuxProbe(await getPartialAudio(song.url, song.startFrom));
+    } else {
+      probe = await demuxProbe(
+        ytdl(song.url, {
+          quality: "highestaudio",
+          highWaterMark: 1 << 25,
+        })
+      );
+    }
+    this.audioPlayer.play(
+      createAudioResource(probe.stream, {
+        inputType: probe.type,
+      })
+    );
     this.connection.subscribe(this.audioPlayer);
     this.isPlaying = true;
   }

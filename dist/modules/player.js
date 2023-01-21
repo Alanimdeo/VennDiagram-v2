@@ -7,6 +7,7 @@ exports.Queue = exports.Player = void 0;
 const discord_js_1 = require("discord.js");
 const voice_1 = require("@discordjs/voice");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
+const partialAudio_1 = require("./partialAudio");
 class Player {
     constructor() {
         this.queue = new discord_js_1.Collection();
@@ -15,8 +16,19 @@ class Player {
 exports.Player = Player;
 class Queue {
     async play(song) {
-        let probe = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }));
-        this.audioPlayer.play((0, voice_1.createAudioResource)(probe.stream, { inputType: probe.type }));
+        let probe;
+        if (song.startFrom) {
+            probe = await (0, voice_1.demuxProbe)(await (0, partialAudio_1.getPartialAudio)(song.url, song.startFrom));
+        }
+        else {
+            probe = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(song.url, {
+                quality: "highestaudio",
+                highWaterMark: 1 << 25,
+            }));
+        }
+        this.audioPlayer.play((0, voice_1.createAudioResource)(probe.stream, {
+            inputType: probe.type,
+        }));
         this.connection.subscribe(this.audioPlayer);
         this.isPlaying = true;
     }
