@@ -2,14 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
+const time_1 = require("../modules/time");
 module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("목록").setDescription("재생 목록을 확인합니다."), async (interaction, bot) => {
     await interaction.deferReply();
     let message = "";
     let guildQueue = bot.player.queue.get(interaction.guildId || "");
     if (guildQueue && guildQueue.songs.length !== 0) {
         let length = String(guildQueue.songs.length).length;
-        guildQueue.songs.forEach((song, index) => {
-            message += `\n${index === 0 ? (guildQueue?.isPlaying ? ":arrow_forward:" : ":pause_button:") : ""}\`${String(index + 1).padStart(length, "0")}. ${song.title} (${song.duration})\``;
+        guildQueue.songs.map((song, index) => {
+            message += `\n${index === 0 ? (guildQueue?.isPlaying ? ":arrow_forward:" : ":pause_button:") : ""}\`${String(index + 1).padStart(length, "0")}. ${song.title} (`;
+            if (song.startFrom !== 0)
+                message += `${(0, time_1.convertSecondsToTime)(song.startFrom)} ~ `;
+            message += `${song.duration})\``;
         });
     }
     else
