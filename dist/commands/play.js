@@ -5,6 +5,7 @@ const ytdl_core_1 = require("ytdl-core");
 const search_1 = require("../modules/search");
 const song_1 = require("../modules/song");
 const player_1 = require("../modules/player");
+const time_1 = require("../modules/time");
 const types_1 = require("../types");
 module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("재생")
@@ -105,15 +106,21 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         return;
     const newSong = new song_1.Song(song, startFrom, interaction.member);
     guildQueue.songs.push(newSong);
+    const embeds = [
+        new discord_js_1.EmbedBuilder()
+            .setColor("#008000")
+            .setTitle(":white_check_mark: 곡을 추가했어요")
+            .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
+            .setThumbnail(newSong.thumbnail),
+    ];
+    if (startFrom > 0) {
+        embeds[0].setFooter({
+            text: `시작 위치: ${(0, time_1.convertSecondsToTime)(startFrom)}`,
+        });
+    }
     await interaction.editReply({
         content: null,
-        embeds: [
-            new discord_js_1.EmbedBuilder()
-                .setColor("#008000")
-                .setTitle(":white_check_mark: 곡을 추가했어요")
-                .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
-                .setThumbnail(newSong.thumbnail),
-        ],
+        embeds,
     });
     if (!guildQueue.isPlaying) {
         await guildQueue.play(guildQueue.songs[0]);

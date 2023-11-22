@@ -3,6 +3,7 @@ import { getInfo, videoInfo } from "ytdl-core";
 import { makeChoice, search } from "../modules/search";
 import { Song } from "../modules/song";
 import { Queue } from "../modules/player";
+import { convertSecondsToTime } from "../modules/time";
 import { Bot, Command } from "../types";
 import { Item } from "ytsr";
 
@@ -104,15 +105,21 @@ module.exports = new Command(
     if (!guildQueue) return;
     const newSong = new Song(song, startFrom, interaction.member as GuildMember);
     guildQueue.songs.push(newSong);
+    const embeds = [
+      new EmbedBuilder()
+        .setColor("#008000")
+        .setTitle(":white_check_mark: 곡을 추가했어요")
+        .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
+        .setThumbnail(newSong.thumbnail),
+    ];
+    if (startFrom > 0) {
+      embeds[0].setFooter({
+        text: `시작 위치: ${convertSecondsToTime(startFrom)}`,
+      });
+    }
     await interaction.editReply({
       content: null,
-      embeds: [
-        new EmbedBuilder()
-          .setColor("#008000")
-          .setTitle(":white_check_mark: 곡을 추가했어요")
-          .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
-          .setThumbnail(newSong.thumbnail),
-      ],
+      embeds,
     });
     if (!guildQueue.isPlaying) {
       await guildQueue.play(guildQueue.songs[0]);
