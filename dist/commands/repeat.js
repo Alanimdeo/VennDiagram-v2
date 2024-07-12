@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
+exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("반복")
     .setDescription("반복 유형을 설정합니다.")
     .addStringOption((option) => option
@@ -27,7 +27,9 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
                 .setColor("#008000")
                 .setTitle(`:${repeatMode === "none" ? "arrow_right" : repeatMode === "song" ? "repeat_one" : "repeat"}: ${repeatMode === "none"
                 ? "반복을 껐어요"
-                : "반복 유형을 " + (repeatMode == "song" ? "곡으로" : "전체로") + " 설정했어요"}`),
+                : "반복 유형을 " +
+                    (repeatMode == "song" ? "곡으로" : "전체로") +
+                    " 설정했어요"}`),
         ],
     });
 });

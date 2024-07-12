@@ -1,16 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const ytdl_core_1 = require("ytdl-core");
+const ytdl_core_1 = require("@distube/ytdl-core");
 const search_1 = require("../modules/search");
 const song_1 = require("../modules/song");
 const player_1 = require("../modules/player");
 const time_1 = require("../modules/time");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
+exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("재생")
     .setDescription("노래를 재생합니다.")
-    .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(true)), async (interaction, bot) => {
+    .addStringOption((option) => option
+    .setName("제목")
+    .setDescription("제목을 입력하세요.")
+    .setRequired(true)), async (interaction, bot) => {
     await interaction.deferReply();
     let author = interaction.member;
     if (!author.voice.channel)
@@ -70,7 +73,10 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         }
         song = result;
     }
-    if (!song || !interaction.guildId || !interaction.channel || !interaction.member) {
+    if (!song ||
+        !interaction.guildId ||
+        !interaction.channel ||
+        !interaction.member) {
         return await interaction.editReply("검색 결과가 없어요.");
     }
     if (Array.isArray(song)) {
@@ -119,7 +125,6 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         });
     }
     await interaction.editReply({
-        content: null,
         embeds,
     });
     if (!guildQueue.isPlaying) {

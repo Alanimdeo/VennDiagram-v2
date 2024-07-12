@@ -1,16 +1,25 @@
-import { ChatInputCommandInteraction, Collection, GuildMember } from "discord.js";
-import { getInfo, videoInfo } from "ytdl-core";
+import {
+  ChatInputCommandInteraction,
+  Collection,
+  GuildMember,
+} from "discord.js";
+import { getInfo, videoInfo } from "@distube/ytdl-core";
 import ytsr from "ytsr";
 
-export async function search(keyword: string, limit: number = 5): Promise<ytsr.Item[]> {
+export async function search(
+  keyword: string,
+  limit: number = 5
+): Promise<ytsr.Item[]> {
   return new Promise(async (resolve, reject) => {
     const filters = await ytsr.getFilters(keyword);
     const typeFilters = filters.get("Type");
     if (!typeFilters) return reject(new Error("resultNotFound"));
     const filter = typeFilters.get("Video");
     if (!filter || !filter.url) return reject(new Error("resultNotFound"));
-    let searchResult = (await ytsr(filter.url, { hl: "ko", gl: "KR", limit })).items;
-    if (!searchResult || searchResult.length === 0) return reject(new Error("resultNotFound"));
+    let searchResult = (await ytsr(filter.url, { hl: "ko", gl: "KR", limit }))
+      .items;
+    if (!searchResult || searchResult.length === 0)
+      return reject(new Error("resultNotFound"));
     return resolve(searchResult.slice(0, limit));
   });
 }
@@ -45,9 +54,11 @@ export async function makeChoice(
       });
       if (!message || !message.first()) return reject(new Error("Timeout"));
       const choice = Number(message.first()?.content) - 1;
-      if (isNaN(choice) || choice < 0 || choice > 4) return reject(new Error("invalidChoice"));
+      if (isNaN(choice) || choice < 0 || choice > 4)
+        return reject(new Error("invalidChoice"));
       const result = searchResult[choice];
-      if (!result || result.type != "video") return reject(new Error("invalidResult"));
+      if (!result || result.type != "video")
+        return reject(new Error("invalidResult"));
       await interaction.editReply("곡을 추가하는 중이에요.");
       const songInfo = await getInfo(result.url);
       return resolve(songInfo);

@@ -1,4 +1,9 @@
-import { Collection, EmbedBuilder, TextBasedChannel, VoiceBasedChannel } from "discord.js";
+import {
+  Collection,
+  EmbedBuilder,
+  TextBasedChannel,
+  VoiceBasedChannel,
+} from "discord.js";
 import {
   AudioPlayer,
   AudioPlayerStatus,
@@ -11,7 +16,7 @@ import {
   ProbeInfo,
   VoiceConnection,
 } from "@discordjs/voice";
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 import { getPartialAudio } from "./partialAudio";
 import { Song } from "./song";
 import { Bot } from "../types";
@@ -55,20 +60,27 @@ export class Queue {
     this.isPlaying = true;
   }
 
-  constructor(textChannel: TextBasedChannel, voiceChannel: VoiceBasedChannel, bot: Bot) {
+  constructor(
+    textChannel: TextBasedChannel,
+    voiceChannel: VoiceBasedChannel,
+    bot: Bot
+  ) {
     this.bot = bot;
     this.textChannel = textChannel;
     this.voiceChannel = voiceChannel;
     this.connection = joinVoiceChannel({
       guildId: voiceChannel.guildId,
       channelId: voiceChannel.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
+      adapterCreator: voiceChannel.guild
+        .voiceAdapterCreator as DiscordGatewayAdapterCreator,
     });
     this.quitTimer = null;
     this.songs = [];
     this.isPlaying = false;
     this.repeatMode = "none";
-    this.audioPlayer = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } });
+    this.audioPlayer = createAudioPlayer({
+      behaviors: { noSubscriber: NoSubscriberBehavior.Pause },
+    });
     this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
       if (this.repeatMode === "none") this.songs.shift();
       else if (this.repeatMode === "all") {
@@ -97,7 +109,9 @@ export class Queue {
             new EmbedBuilder()
               .setColor("#0067a3")
               .setTitle(":arrow_forward: 노래를 재생할게요")
-              .setDescription(`[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`)
+              .setDescription(
+                `[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`
+              )
               .setThumbnail(this.songs[0].thumbnail)
               .setFooter({
                 text: `${this.songs[0].requestedUser.displayName} 님이 신청하셨어요.`,

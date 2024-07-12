@@ -1,7 +1,12 @@
-import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import { Bot, Command } from "../types";
 
-module.exports = new Command(
+export default new Command(
   new SlashCommandBuilder()
     .setName("반복")
     .setDescription("반복 유형을 설정합니다.")
@@ -9,17 +14,25 @@ module.exports = new Command(
       option
         .setName("유형")
         .setDescription("반복 유형을 선택하세요.")
-        .addChoices({ name: "없음", value: "none" }, { name: "곡", value: "song" }, { name: "전체", value: "all" })
+        .addChoices(
+          { name: "없음", value: "none" },
+          { name: "곡", value: "song" },
+          { name: "전체", value: "all" }
+        )
         .setRequired(true)
     ),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
     let author = interaction.member as GuildMember;
-    if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");
+    if (!author.voice.channel)
+      return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let guildQueue = bot.player.queue.get(interaction.guildId || "");
-    if (!guildQueue) return await interaction.editReply("재생 목록에 노래가 없어요.");
+    if (!guildQueue)
+      return await interaction.editReply("재생 목록에 노래가 없어요.");
     let repeatMode = interaction.options.getString("유형", true);
-    if (!(repeatMode === "none" || repeatMode === "song" || repeatMode === "all"))
+    if (
+      !(repeatMode === "none" || repeatMode === "song" || repeatMode === "all")
+    )
       return await interaction.editReply("유형을 선택하세요.");
     guildQueue.repeatMode = repeatMode;
     await interaction.editReply({
@@ -30,7 +43,9 @@ module.exports = new Command(
             `:${repeatMode === "none" ? "arrow_right" : repeatMode === "song" ? "repeat_one" : "repeat"}: ${
               repeatMode === "none"
                 ? "반복을 껐어요"
-                : "반복 유형을 " + (repeatMode == "song" ? "곡으로" : "전체로") + " 설정했어요"
+                : "반복 유형을 " +
+                  (repeatMode == "song" ? "곡으로" : "전체로") +
+                  " 설정했어요"
             }`
           ),
       ],

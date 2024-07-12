@@ -2,10 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
+exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("삭제")
     .setDescription("재생 목록에서 노래를 삭제합니다. 첫 번째 노래를 삭제할 경우, 재생 중이던 노래가 스킵됩니다.")
-    .addIntegerOption((option) => option.setName("번호").setDescription("삭제할 노래의 번호를 입력하세요.").setRequired(true)), async (interaction, bot) => {
+    .addIntegerOption((option) => option
+    .setName("번호")
+    .setDescription("삭제할 노래의 번호를 입력하세요.")
+    .setRequired(true)), async (interaction, bot) => {
     await interaction.deferReply();
     let author = interaction.member;
     if (!author.voice.channel || !interaction.guildId)
@@ -23,6 +26,8 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         guildQueue.audioPlayer.stop();
     }
     await interaction.editReply({
-        embeds: [new discord_js_1.EmbedBuilder().setColor("#008000").setTitle(":x: 곡을 삭제했어요")],
+        embeds: [
+            new discord_js_1.EmbedBuilder().setColor("#008000").setTitle(":x: 곡을 삭제했어요"),
+        ],
     });
 });

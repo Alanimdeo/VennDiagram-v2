@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
+exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("일시정지")
     .setDescription("음악을 일시정지합니다.")
     .addNumberOption((option) => option
@@ -42,7 +42,11 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         guildQueue.isPlaying = true;
         guildQueue.audioPlayer.unpause();
         await interaction.editReply({
-            embeds: [new discord_js_1.EmbedBuilder().setColor("#ffff00").setTitle(":arrow_forward: 일시정지를 해제했어요")],
+            embeds: [
+                new discord_js_1.EmbedBuilder()
+                    .setColor("#ffff00")
+                    .setTitle(":arrow_forward: 일시정지를 해제했어요"),
+            ],
         });
     }
 });

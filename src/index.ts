@@ -1,4 +1,6 @@
-console.log(`봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`);
+console.log(
+  `봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`
+);
 import { Collection, GatewayIntentBits, Message, VoiceState } from "discord.js";
 import { readdirSync, readFileSync } from "fs";
 import { Bot, Command, Config } from "./types";
@@ -8,10 +10,17 @@ let config: Config;
 function loadConfig(path: string = "."): Config {
   try {
     const configFile = JSON.parse(readFileSync(`${path}/config.json`, "utf-8"));
-    if (!configFile.token || !configFile.adminPrefix || !configFile.admins || !Array.isArray(configFile.admins)) {
+    if (
+      !configFile.token ||
+      !configFile.adminPrefix ||
+      !configFile.admins ||
+      !Array.isArray(configFile.admins)
+    ) {
       throw new Error("잘못된 설정 파일입니다.");
     }
-    configFile.admins = configFile.admins.map((admin: string | number) => String(admin));
+    configFile.admins = configFile.admins.map((admin: string | number) =>
+      String(admin)
+    );
     return configFile as Config;
   } catch (err: any) {
     if (err?.code === "ENOENT" && path === ".") {
@@ -42,9 +51,11 @@ const bot: Bot = new Bot({
 });
 
 const path = readdirSync("./").includes("dist") ? "./dist" : ".";
-const commands = readdirSync(`${path}/commands`).filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
+const commands = readdirSync(`${path}/commands`).filter(
+  (file: string) => file.endsWith(".js") || file.endsWith(".ts")
+);
 for (const file of commands) {
-  const command: Command = require(`./commands/${file}`);
+  const command: Command = require(`./commands/${file}`).default;
   console.log(`명령어 불러오는 중.. (${command.data.name})`);
   bot.commands.set(command.data.name, command);
 }
@@ -53,7 +64,7 @@ const adminCommands = readdirSync(`${path}/adminCommands`).filter(
   (file: string) => file.endsWith(".js") || file.endsWith(".ts")
 );
 for (const file of adminCommands) {
-  const command: Command = require(`./adminCommands/${file}`);
+  const command: Command = require(`./adminCommands/${file}`).default;
   console.log(`관리자 명령어 불러오는 중.. (${command.data.description})`);
   bot.adminCommands.set(command.data.name, command);
 }
@@ -79,7 +90,11 @@ bot.on("interactionCreate", async (interaction) => {
 });
 
 bot.on("messageCreate", async (message: Message) => {
-  if (!message.content.startsWith(config.adminPrefix) || !config.admins.includes(message.author.id)) return;
+  if (
+    !message.content.startsWith(config.adminPrefix) ||
+    !config.admins.includes(message.author.id)
+  )
+    return;
 
   const command = bot.adminCommands.get(message.content.split(" ")[1]);
   if (!command) return;
@@ -90,7 +105,9 @@ bot.on("messageCreate", async (message: Message) => {
 bot.on("voiceStateUpdate", (_, newState: VoiceState) => {
   const guildQueue = bot.player.queue.get(newState.guild.id);
   if (!guildQueue || !guildQueue.connection.joinConfig.channelId) return;
-  const channel = newState.guild.channels.cache.get(guildQueue.connection.joinConfig.channelId);
+  const channel = newState.guild.channels.cache.get(
+    guildQueue.connection.joinConfig.channelId
+  );
   if (!channel || !(channel.members instanceof Collection)) return;
   const members = Array.from(channel.members.keys());
   if (members.length === 1 || !bot.user || !members.includes(bot.user.id)) {

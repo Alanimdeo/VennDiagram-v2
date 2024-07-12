@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPartialAudio = exports.getVideoInfo = void 0;
+exports.getVideoInfo = void 0;
+exports.getPartialAudio = getPartialAudio;
 const stream_1 = __importDefault(require("stream"));
 const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
-const ytdl_core_1 = __importDefault(require("ytdl-core"));
+const ytdl_core_1 = __importDefault(require("@distube/ytdl-core"));
 const getVideoInfo = async (videoUrl) => {
     const video = await ytdl_core_1.default.getInfo(videoUrl);
     const formats = video.formats.filter((format) => format.hasAudio === true && format.audioCodec === "opus");
@@ -27,4 +28,3 @@ async function getPartialAudio(videoUrl, startFrom) {
     ff.pipe(ffStream, { end: true });
     return ffStream;
 }
-exports.getPartialAudio = getPartialAudio;

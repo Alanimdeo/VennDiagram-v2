@@ -1,5 +1,5 @@
 import { GuildMember } from "discord.js";
-import { videoInfo } from "ytdl-core";
+import { videoInfo } from "@distube/ytdl-core";
 
 export class Song {
   title: string;
@@ -10,7 +10,11 @@ export class Song {
   startFrom: number;
   requestedUser: GuildMember;
 
-  constructor(songInfo: videoInfo, startFrom: number = 0, requestedUser: GuildMember) {
+  constructor(
+    songInfo: videoInfo,
+    startFrom: number = 0,
+    requestedUser: GuildMember
+  ) {
     this.title = songInfo.videoDetails.title;
     this.url = songInfo.videoDetails.video_url;
     this.thumbnail = `https://i.ytimg.com/vi/${songInfo.videoDetails.videoId}/hqdefault.jpg`;

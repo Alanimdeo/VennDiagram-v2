@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeChoice = exports.search = void 0;
+exports.search = search;
+exports.makeChoice = makeChoice;
 const discord_js_1 = require("discord.js");
-const ytdl_core_1 = require("ytdl-core");
+const ytdl_core_1 = require("@distube/ytdl-core");
 const ytsr_1 = __importDefault(require("ytsr"));
 async function search(keyword, limit = 5) {
     return new Promise(async (resolve, reject) => {
@@ -16,13 +17,13 @@ async function search(keyword, limit = 5) {
         const filter = typeFilters.get("Video");
         if (!filter || !filter.url)
             return reject(new Error("resultNotFound"));
-        let searchResult = (await (0, ytsr_1.default)(filter.url, { hl: "ko", gl: "KR", limit })).items;
+        let searchResult = (await (0, ytsr_1.default)(filter.url, { hl: "ko", gl: "KR", limit }))
+            .items;
         if (!searchResult || searchResult.length === 0)
             return reject(new Error("resultNotFound"));
         return resolve(searchResult.slice(0, limit));
     });
 }
-exports.search = search;
 async function makeChoice(searchResult, interaction) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -68,4 +69,3 @@ async function makeChoice(searchResult, interaction) {
         }
     });
 }
-exports.makeChoice = makeChoice;

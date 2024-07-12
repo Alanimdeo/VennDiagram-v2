@@ -1,5 +1,10 @@
-import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
-import { getInfo, videoInfo } from "ytdl-core";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
+import { getInfo, videoInfo } from "@distube/ytdl-core";
 import { makeChoice, search } from "../modules/search";
 import { Song } from "../modules/song";
 import { Queue } from "../modules/player";
@@ -7,15 +12,21 @@ import { convertSecondsToTime } from "../modules/time";
 import { Bot, Command } from "../types";
 import { Item } from "ytsr";
 
-module.exports = new Command(
+export default new Command(
   new SlashCommandBuilder()
     .setName("재생")
     .setDescription("노래를 재생합니다.")
-    .addStringOption((option) => option.setName("제목").setDescription("제목을 입력하세요.").setRequired(true)),
+    .addStringOption((option) =>
+      option
+        .setName("제목")
+        .setDescription("제목을 입력하세요.")
+        .setRequired(true)
+    ),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
     let author: GuildMember = interaction.member as GuildMember;
-    if (!author.voice.channel) return await interaction.editReply("먼저 음성 채널에 참가하세요.");
+    if (!author.voice.channel)
+      return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let keyword = interaction.options.getString("제목", true);
     let song: Item[] | videoInfo;
     let startFrom = 0;
@@ -27,7 +38,9 @@ module.exports = new Command(
       try {
         song = await getInfo(keyword);
       } catch (err) {
-        await interaction.editReply("존재하지 않는 영상이에요. 링크를 다시 확인해 주세요.");
+        await interaction.editReply(
+          "존재하지 않는 영상이에요. 링크를 다시 확인해 주세요."
+        );
         return;
       }
       if (/(\?|&)t=[0-9]+(s)?/.test(keyword)) {
@@ -51,7 +64,9 @@ module.exports = new Command(
           errors: ["time"],
         });
         if (!message || !message.first()) {
-          await interaction.editReply("시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.");
+          await interaction.editReply(
+            "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요."
+          );
           return;
         }
         const choice = message.first()?.content;
@@ -74,7 +89,12 @@ module.exports = new Command(
       }
       song = result;
     }
-    if (!song || !interaction.guildId || !interaction.channel || !interaction.member) {
+    if (
+      !song ||
+      !interaction.guildId ||
+      !interaction.channel ||
+      !interaction.member
+    ) {
       return await interaction.editReply("검색 결과가 없어요.");
     }
     if (Array.isArray(song)) {
@@ -99,17 +119,26 @@ module.exports = new Command(
     }
     let guildQueue = bot.player.queue.get(interaction.guildId);
     if (!guildQueue) {
-      bot.player.queue.set(interaction.guildId, new Queue(interaction.channel, author.voice.channel, bot));
+      bot.player.queue.set(
+        interaction.guildId,
+        new Queue(interaction.channel, author.voice.channel, bot)
+      );
       guildQueue = bot.player.queue.get(interaction.guildId);
     }
     if (!guildQueue) return;
-    const newSong = new Song(song, startFrom, interaction.member as GuildMember);
+    const newSong = new Song(
+      song,
+      startFrom,
+      interaction.member as GuildMember
+    );
     guildQueue.songs.push(newSong);
     const embeds = [
       new EmbedBuilder()
         .setColor("#008000")
         .setTitle(":white_check_mark: 곡을 추가했어요")
-        .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
+        .setDescription(
+          `[${newSong.title}](${newSong.url}) (${newSong.duration})`
+        )
         .setThumbnail(newSong.thumbnail),
     ];
     if (startFrom > 0) {
@@ -118,7 +147,6 @@ module.exports = new Command(
       });
     }
     await interaction.editReply({
-      content: null,
       embeds,
     });
     if (!guildQueue.isPlaying) {

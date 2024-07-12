@@ -1,7 +1,7 @@
 import { Message, SlashCommandBuilder } from "discord.js";
 import { Bot, Command } from "../types";
 
-module.exports = new Command(
+export default new Command(
   new SlashCommandBuilder().setName("eval").setDescription("명령 실행"),
   async (message: Message, bot: Bot) => {
     try {
@@ -9,7 +9,8 @@ module.exports = new Command(
       command.shift();
       command.shift();
       let result = eval(command.join(" "));
-      if (typeof result === "object") result = JSON.stringify(result, undefined, 2);
+      if (typeof result === "object")
+        result = JSON.stringify(result, undefined, 2);
       message.reply("```" + String(result) + "```");
     } catch (err) {
       message.reply("```" + String(err) + "```");

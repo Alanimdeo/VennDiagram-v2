@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
 const time_1 = require("../modules/time");
-module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("목록").setDescription("재생 목록을 확인합니다."), async (interaction, bot) => {
+exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
+    .setName("목록")
+    .setDescription("재생 목록을 확인합니다."), async (interaction, bot) => {
     await interaction.deferReply();
     let message = "";
     let guildQueue = bot.player.queue.get(interaction.guildId || "");
@@ -17,10 +19,15 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setN
         });
     }
     else
-        message += ".노래가 없어요. `/재생 (노래 제목 또는 유튜브 링크)` 명령어를 통해 노래를 틀어 보세요!";
+        message +=
+            ".노래가 없어요. `/재생 (노래 제목 또는 유튜브 링크)` 명령어를 통해 노래를 틀어 보세요!";
     const repeatMode = guildQueue
         ? " (반복 모드: " +
-            (guildQueue.repeatMode === "none" ? "없음" : guildQueue.repeatMode === "song" ? "곡" : "전체") +
+            (guildQueue.repeatMode === "none"
+                ? "없음"
+                : guildQueue.repeatMode === "song"
+                    ? "곡"
+                    : "전체") +
             ")"
         : "";
     await interaction.editReply({

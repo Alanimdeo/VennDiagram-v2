@@ -6,6 +6,7 @@ import {
   Interaction,
   Message,
   SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 import { Player } from "./modules/player";
 
@@ -32,16 +33,18 @@ export class Bot extends Client {
   }
 }
 
-export type CommandExecutable<T = ChatInputCommandInteraction | Message | string[]> = (
-  input: T,
-  bot: Bot
-) => Promise<any>;
+export type CommandExecutable<
+  T = ChatInputCommandInteraction | Message | string[],
+> = (input: T, bot: Bot) => Promise<any>;
 
 export class Command<T = ChatInputCommandInteraction | Message | string[]> {
-  data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">;
+  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
   execute: CommandExecutable<T>;
 
-  constructor(data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">, execute: CommandExecutable<T>) {
+  constructor(
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder,
+    execute: CommandExecutable<T>
+  ) {
     this.data = data;
     this.execute = execute;
   }

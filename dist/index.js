@@ -9,7 +9,10 @@ let config;
 function loadConfig(path = ".") {
     try {
         const configFile = JSON.parse((0, fs_1.readFileSync)(`${path}/config.json`, "utf-8"));
-        if (!configFile.token || !configFile.adminPrefix || !configFile.admins || !Array.isArray(configFile.admins)) {
+        if (!configFile.token ||
+            !configFile.adminPrefix ||
+            !configFile.admins ||
+            !Array.isArray(configFile.admins)) {
             throw new Error("잘못된 설정 파일입니다.");
         }
         configFile.admins = configFile.admins.map((admin) => String(admin));
@@ -45,13 +48,13 @@ const bot = new types_1.Bot({
 const path = (0, fs_1.readdirSync)("./").includes("dist") ? "./dist" : ".";
 const commands = (0, fs_1.readdirSync)(`${path}/commands`).filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
-    const command = require(`./commands/${file}`);
+    const command = require(`./commands/${file}`).default;
     console.log(`명령어 불러오는 중.. (${command.data.name})`);
     bot.commands.set(command.data.name, command);
 }
 const adminCommands = (0, fs_1.readdirSync)(`${path}/adminCommands`).filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of adminCommands) {
-    const command = require(`./adminCommands/${file}`);
+    const command = require(`./adminCommands/${file}`).default;
     console.log(`관리자 명령어 불러오는 중.. (${command.data.description})`);
     bot.adminCommands.set(command.data.name, command);
 }
@@ -72,7 +75,8 @@ bot.on("interactionCreate", async (interaction) => {
     await command.execute(interaction, bot);
 });
 bot.on("messageCreate", async (message) => {
-    if (!message.content.startsWith(config.adminPrefix) || !config.admins.includes(message.author.id))
+    if (!message.content.startsWith(config.adminPrefix) ||
+        !config.admins.includes(message.author.id))
         return;
     const command = bot.adminCommands.get(message.content.split(" ")[1]);
     if (!command)
