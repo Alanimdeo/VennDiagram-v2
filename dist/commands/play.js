@@ -125,6 +125,7 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         });
     }
     await interaction.editReply({
+        content: null,
         embeds,
     });
     if (!guildQueue.isPlaying) {

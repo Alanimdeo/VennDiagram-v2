@@ -147,6 +147,7 @@ export default new Command(
       });
     }
     await interaction.editReply({
+      content: null,
       embeds,
     });
     if (!guildQueue.isPlaying) {
