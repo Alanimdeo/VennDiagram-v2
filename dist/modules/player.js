@@ -24,6 +24,7 @@ class Queue {
             probe = await (0, voice_1.demuxProbe)((0, ytdl_core_1.default)(song.url, {
                 quality: "highestaudio",
                 highWaterMark: 1 << 25,
+                agent: this.bot.ytdlAgent,
             }));
         }
         this.audioPlayer.play((0, voice_1.createAudioResource)(probe.stream, {

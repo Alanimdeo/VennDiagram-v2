@@ -41,14 +41,39 @@ try {
 }
 
 console.log("봇 생성 중...");
-const bot: Bot = new Bot({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.MessageContent,
-  ],
-});
+
+const cookies = (() => {
+  if (!config.cookiesPath) {
+    return undefined;
+  }
+  try {
+    console.log("쿠키 불러오는 중...");
+
+    const cookies = JSON.parse(readFileSync(config.cookiesPath, "utf-8"));
+
+    if (!Array.isArray(cookies)) {
+      throw new Error("쿠키 파일이 잘못되었습니다.");
+    }
+
+    return cookies;
+  } catch (err) {
+    console.error("쿠키 파일을 불러오는 중 오류가 발생했습니다.");
+    console.error(err);
+    return undefined;
+  }
+})();
+
+const bot: Bot = new Bot(
+  {
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.MessageContent,
+    ],
+  },
+  cookies
+);
 
 const path = readdirSync("./").includes("dist") ? "./dist" : ".";
 const commands = readdirSync(`${path}/commands`).filter(

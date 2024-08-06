@@ -10,7 +10,7 @@ import { Song } from "../modules/song";
 import { Queue } from "../modules/player";
 import { convertSecondsToTime } from "../modules/time";
 import { Bot, Command } from "../types";
-import { Item } from "ytsr";
+import { Video } from "@distube/ytsr";
 
 export default new Command(
   new SlashCommandBuilder()
@@ -28,7 +28,7 @@ export default new Command(
     if (!author.voice.channel)
       return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let keyword = interaction.options.getString("제목", true);
-    let song: Item[] | videoInfo;
+    let song: Video[] | videoInfo;
     let startFrom = 0;
     if (
       /((http|https):\/\/)?(youtu\.be\/(shorts\/)?|(www\.)?youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(
