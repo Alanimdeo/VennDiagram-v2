@@ -48,6 +48,7 @@ export class Queue {
         ytdl(song.url, {
           quality: "highestaudio",
           highWaterMark: 1 << 25,
+          agent: this.bot.ytdlAgent,
         })
       );
     }

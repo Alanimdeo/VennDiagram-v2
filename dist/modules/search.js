@@ -7,21 +7,18 @@ exports.search = search;
 exports.makeChoice = makeChoice;
 const discord_js_1 = require("discord.js");
 const ytdl_core_1 = require("@distube/ytdl-core");
-const ytsr_1 = __importDefault(require("ytsr"));
+const ytsr_1 = __importDefault(require("@distube/ytsr"));
 async function search(keyword, limit = 5) {
     return new Promise(async (resolve, reject) => {
-        const filters = await ytsr_1.default.getFilters(keyword);
-        const typeFilters = filters.get("Type");
-        if (!typeFilters)
+        const result = await (0, ytsr_1.default)(keyword, {
+            hl: "ko",
+            gl: "KR",
+            limit,
+            type: "video",
+        });
+        if (!result || !result.results || result.items.length == 0)
             return reject(new Error("resultNotFound"));
-        const filter = typeFilters.get("Video");
-        if (!filter || !filter.url)
-            return reject(new Error("resultNotFound"));
-        let searchResult = (await (0, ytsr_1.default)(filter.url, { hl: "ko", gl: "KR", limit }))
-            .items;
-        if (!searchResult || searchResult.length === 0)
-            return reject(new Error("resultNotFound"));
-        return resolve(searchResult.slice(0, limit));
+        return resolve(result.items.slice(0, limit));
     });
 }
 async function makeChoice(searchResult, interaction) {
@@ -31,7 +28,7 @@ async function makeChoice(searchResult, interaction) {
             searchResult.map((item, index) => {
                 if (item.type != "video")
                     return;
-                question += `\n${index + 1}. ${item.title} (${item.duration})`;
+                question += `\n${index + 1}. ${item.name} (${item.duration})`;
             });
             await interaction.editReply(question);
             const message = await interaction.channel?.awaitMessages({

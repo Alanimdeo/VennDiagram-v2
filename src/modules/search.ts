@@ -9,10 +9,16 @@ import ytsr from "@distube/ytsr";
 export async function search(
   keyword: string,
   limit: number = 5
-): Promise< ytsr.Video[]> {
+): Promise<ytsr.Video[]> {
   return new Promise(async (resolve, reject) => {
-    const result = await ytsr(keyword, { hl: "ko", gl: "KR", limit, type: "video" });
-    if (!result || !result.results || result.items.length == 0) return reject(new Error("resultNotFound"));
+    const result = await ytsr(keyword, {
+      hl: "ko",
+      gl: "KR",
+      limit,
+      type: "video",
+    });
+    if (!result || !result.results || result.items.length == 0)
+      return reject(new Error("resultNotFound"));
     return resolve(result.items.slice(0, limit));
   });
 }

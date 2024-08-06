@@ -1,3 +1,4 @@
+import fs from "fs";
 import {
   Client,
   ClientOptions,
@@ -9,11 +10,13 @@ import {
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 import { Player } from "./modules/player";
+import ytdl from "@distube/ytdl-core";
 
 export interface Config {
   token: string;
   adminPrefix: string;
   admins: string[];
+  cookiesPath?: string;
 }
 
 export class Bot extends Client {
@@ -22,14 +25,16 @@ export class Bot extends Client {
   adminCommands: Collection<string, Command<Message>>;
   consoleCommands: Collection<string, Command<string[]>>;
   lastInteraction: Interaction | null;
+  ytdlAgent: ytdl.Agent;
 
-  constructor(clientOptions: ClientOptions) {
+  constructor(clientOptions: ClientOptions, cookies?: ytdl.Cookie[]) {
     super(clientOptions);
     this.player = new Player();
     this.commands = new Collection<string, Command>();
     this.adminCommands = new Collection<string, Command>();
     this.consoleCommands = new Collection<string, Command>();
     this.lastInteraction = null;
+    this.ytdlAgent = ytdl.createAgent(cookies);
   }
 }
 

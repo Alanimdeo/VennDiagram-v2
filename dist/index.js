@@ -37,6 +37,24 @@ catch (err) {
     process.exit(1);
 }
 console.log("봇 생성 중...");
+const cookies = (() => {
+    if (!config.cookiesPath) {
+        return undefined;
+    }
+    try {
+        console.log("쿠키 불러오는 중...");
+        const cookies = JSON.parse((0, fs_1.readFileSync)(config.cookiesPath, "utf-8"));
+        if (!Array.isArray(cookies)) {
+            throw new Error("쿠키 파일이 잘못되었습니다.");
+        }
+        return cookies;
+    }
+    catch (err) {
+        console.error("쿠키 파일을 불러오는 중 오류가 발생했습니다.");
+        console.error(err);
+        return undefined;
+    }
+})();
 const bot = new types_1.Bot({
     intents: [
         discord_js_1.GatewayIntentBits.Guilds,
@@ -44,7 +62,7 @@ const bot = new types_1.Bot({
         discord_js_1.GatewayIntentBits.GuildVoiceStates,
         discord_js_1.GatewayIntentBits.MessageContent,
     ],
-});
+}, cookies);
 const path = (0, fs_1.readdirSync)("./").includes("dist") ? "./dist" : ".";
 const commands = (0, fs_1.readdirSync)(`${path}/commands`).filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
