@@ -4,5 +4,7 @@ config.json
 config.js
 config.ts
 
+cookies.json
+
 *-base.js
 .DS_Store
