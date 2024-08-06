@@ -4,28 +4,21 @@ import {
   GuildMember,
 } from "discord.js";
 import { getInfo, videoInfo } from "@distube/ytdl-core";
-import ytsr from "ytsr";
+import ytsr from "@distube/ytsr";
 
 export async function search(
   keyword: string,
   limit: number = 5
-): Promise<ytsr.Item[]> {
+): Promise< ytsr.Video[]> {
   return new Promise(async (resolve, reject) => {
-    const filters = await ytsr.getFilters(keyword);
-    const typeFilters = filters.get("Type");
-    if (!typeFilters) return reject(new Error("resultNotFound"));
-    const filter = typeFilters.get("Video");
-    if (!filter || !filter.url) return reject(new Error("resultNotFound"));
-    let searchResult = (await ytsr(filter.url, { hl: "ko", gl: "KR", limit }))
-      .items;
-    if (!searchResult || searchResult.length === 0)
-      return reject(new Error("resultNotFound"));
-    return resolve(searchResult.slice(0, limit));
+    const result = await ytsr(keyword, { hl: "ko", gl: "KR", limit, type: "video" });
+    if (!result || !result.results || result.items.length == 0) return reject(new Error("resultNotFound"));
+    return resolve(result.items.slice(0, limit));
   });
 }
 
 export async function makeChoice(
-  searchResult: ytsr.Item[],
+  searchResult: ytsr.Video[],
   interaction: ChatInputCommandInteraction
 ): Promise<videoInfo> {
   return new Promise(async (resolve, reject) => {
@@ -33,7 +26,7 @@ export async function makeChoice(
       let question = "**:scroll: 노래를 선택해 주세요.**";
       searchResult.map((item, index) => {
         if (item.type != "video") return;
-        question += `\n${index + 1}. ${item.title} (${item.duration})`;
+        question += `\n${index + 1}. ${item.name} (${item.duration})`;
       });
       await interaction.editReply(question);
       const message = await interaction.channel?.awaitMessages({
