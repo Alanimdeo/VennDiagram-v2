@@ -1,6 +1,8 @@
 node_modules
+
 config.json
 config.js
 config.ts
-yarn-error.log
+
+*-base.js
 .DS_Store
