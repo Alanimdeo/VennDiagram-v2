@@ -28,7 +28,7 @@ async function makeChoice(searchResult, interaction) {
             searchResult.map((item, index) => {
                 if (item.type != "video")
                     return;
-                question += `\n${index + 1}. ${item.name} (${item.duration})`;
+                question += `\n${index + 1}. [\`${item.name}\`](<${item.url}>) (${item.duration})`;
             });
             await interaction.editReply(question);
             const message = await interaction.channel?.awaitMessages({

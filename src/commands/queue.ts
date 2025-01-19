@@ -20,7 +20,7 @@ export default new Command(
       guildQueue.songs.map((song: Song, index: number) => {
         message += `\n${index === 0 ? (guildQueue?.isPlaying ? ":arrow_forward:" : ":pause_button:") : ""}\`${String(
           index + 1
-        ).padStart(length, "0")}. ${song.title} (`;
+        ).padStart(length, "0")}. [\`${song.title}\`](<${song.url}>) (`;
         if (song.startFrom !== 0)
           message += `${convertSecondsToTime(song.startFrom)} ~ `;
         message += `${song.duration})\``;

@@ -137,7 +137,7 @@ export default new Command(
         .setColor("#008000")
         .setTitle(":white_check_mark: 곡을 추가했어요")
         .setDescription(
-          `[${newSong.title}](${newSong.url}) (${newSong.duration})`
+          `[\`${newSong.title}\`](<${newSong.url}>) (${newSong.duration})`
         )
         .setThumbnail(newSong.thumbnail),
     ];

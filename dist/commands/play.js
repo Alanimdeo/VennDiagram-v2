@@ -116,7 +116,7 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
         new discord_js_1.EmbedBuilder()
             .setColor("#008000")
             .setTitle(":white_check_mark: 곡을 추가했어요")
-            .setDescription(`[${newSong.title}](${newSong.url}) (${newSong.duration})`)
+            .setDescription(`[\`${newSong.title}\`](<${newSong.url}>) (${newSong.duration})`)
             .setThumbnail(newSong.thumbnail),
     ];
     if (startFrom > 0) {
