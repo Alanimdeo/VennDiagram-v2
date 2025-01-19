@@ -111,7 +111,7 @@ export class Queue {
               .setColor("#0067a3")
               .setTitle(":arrow_forward: 노래를 재생할게요")
               .setDescription(
-                `[${this.songs[0].title}](${this.songs[0].url}) (${this.songs[0].duration})`
+                `[\`${this.songs[0].title}\`](<${this.songs[0].url}>) (${this.songs[0].duration})`
               )
               .setThumbnail(this.songs[0].thumbnail)
               .setFooter({

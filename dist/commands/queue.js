@@ -12,7 +12,7 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     if (guildQueue && guildQueue.songs.length !== 0) {
         let length = String(guildQueue.songs.length).length;
         guildQueue.songs.map((song, index) => {
-            message += `\n${index === 0 ? (guildQueue?.isPlaying ? ":arrow_forward:" : ":pause_button:") : ""}\`${String(index + 1).padStart(length, "0")}. ${song.title} (`;
+            message += `\n${index === 0 ? (guildQueue?.isPlaying ? ":arrow_forward:" : ":pause_button:") : ""}\`${String(index + 1).padStart(length, "0")}. [\`${song.title}\`](<${song.url}>) (`;
             if (song.startFrom !== 0)
                 message += `${(0, time_1.convertSecondsToTime)(song.startFrom)} ~ `;
             message += `${song.duration})\``;
