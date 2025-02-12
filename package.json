@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/voice": "^0.17.0",
-    "@distube/ytdl-core": "^4.15.9",
+    "@distube/ytdl-core": "^4.16.3",
     "@distube/ytsr": "^2.0.4",
     "discord-api-types": "^0.37.93",
     "discord.js": "^14.15.3",
