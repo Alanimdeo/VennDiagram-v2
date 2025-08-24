@@ -95,7 +95,7 @@ for (const file of adminCommands) {
   bot.adminCommands.set(command.data.name, command);
 }
 
-bot.once("ready", () => {
+bot.once("clientReady", () => {
   console.log(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
 });
 
