@@ -116,13 +116,12 @@ bot.on("interactionCreate", async (interaction) => {
 });
 
 bot.on("messageCreate", async (message: Message) => {
-  if (
-    !message.content.startsWith(config.adminPrefix) ||
-    !config.admins.includes(message.author.id)
-  )
-    return;
+  if (!config.admins.includes(message.author.id)) return;
 
-  const command = bot.adminCommands.get(message.content.split(" ")[1]);
+  const content = message.content.split(" ");
+  if (content[0] != config.adminPrefix) return;
+
+  const command = bot.adminCommands.get(content[1]);
   if (!command) return;
 
   await command.execute(message, bot);
