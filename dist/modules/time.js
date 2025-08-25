@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.convertSecondsToTime = convertSecondsToTime;
-function convertSecondsToTime(seconds) {
+exports.timeString = timeString;
+function timeString(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor(seconds / 60) % 60;
     const secondsLeft = seconds % 60;

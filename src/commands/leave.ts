@@ -15,23 +15,13 @@ export default new Command(
     let author = interaction.member as GuildMember;
     if (!author.voice.channel)
       return await interaction.editReply("먼저 음성 채널에 참가하세요.");
-    if (!interaction.guildId) return;
-    let guildQueue = bot.player.queue.get(interaction.guildId);
-    if (!guildQueue)
+    let wrapper = bot.players.get(interaction.guildId!);
+    if (!wrapper)
       return await interaction.editReply(
         "봇이 음성 채널에 참가 중이지 않아요."
       );
-    guildQueue.audioPlayer.stop(true);
-    try {
-      guildQueue.connection.destroy();
-    } catch (err: any) {
-      if (
-        err.message !==
-        "Cannot destroy VoiceConnection - it has already been destroyed"
-      )
-        throw err;
-    }
-    bot.player.queue.delete(interaction.guildId);
+    wrapper.player.stop({ destroy: true });
+    bot.players.delete(interaction.guildId!);
     await interaction.editReply({
       embeds: [
         new EmbedBuilder()

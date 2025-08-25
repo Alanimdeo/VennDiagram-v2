@@ -8,15 +8,18 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     await interaction.deferReply();
     let author = interaction.member;
     if (!author.voice.channel)
-        return await interaction.editReply("음성 채널에 참가하세요!");
-    let guildQueue = bot.player.queue.get(interaction.guildId ? interaction.guildId : "");
-    if (!guildQueue || guildQueue.songs.length === 0)
-        return await interaction.editReply("재생 목록에 노래가 없어요.");
-    guildQueue.songs.shift();
-    if (guildQueue.songs.length !== 0)
-        guildQueue.play(guildQueue.songs[0]);
-    else
-        guildQueue.audioPlayer.stop();
+        return await interaction.editReply("먼저 음성 채널에 참가하세요.");
+    const player = bot.manager.players.get(interaction.guildId);
+    if (!player || !player.current) {
+        return await interaction.editReply("현재 재생 중인 노래가 없어요.");
+    }
+    if (player.queue.size > 0) {
+        player.skip();
+    }
+    else {
+        player.setLoop("off");
+        player.stop();
+    }
     await interaction.editReply({
         embeds: [
             new discord_js_1.EmbedBuilder()

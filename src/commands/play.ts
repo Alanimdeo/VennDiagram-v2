@@ -4,13 +4,10 @@ import {
   GuildMember,
   SlashCommandBuilder,
 } from "discord.js";
-import { getInfo, videoInfo } from "@distube/ytdl-core";
-import { makeChoice, search } from "../modules/search";
-import { Song } from "../modules/song";
-import { Queue } from "../modules/player";
-import { convertSecondsToTime } from "../modules/time";
+import { makeChoice } from "../modules/search";
+import { timeString } from "../modules/time";
 import { Bot, Command } from "../types";
-import { Video } from "@distube/ytsr";
+import { PlayerWrapper } from "../modules/player";
 
 export default new Command(
   new SlashCommandBuilder()
@@ -28,78 +25,35 @@ export default new Command(
     if (!author.voice.channel)
       return await interaction.editReply("먼저 음성 채널에 참가하세요.");
     let keyword = interaction.options.getString("제목", true);
-    let song: Video[] | videoInfo;
-    let startFrom = 0;
-    if (
-      /((http|https):\/\/)?(youtu\.be\/(shorts\/)?|(www\.)?youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(
-        keyword
-      )
-    ) {
-      try {
-        song = await getInfo(keyword);
-      } catch (err) {
-        await interaction.editReply(
-          "존재하지 않는 영상이에요. 링크를 다시 확인해 주세요."
-        );
-        return;
-      }
-      if (/(\?|&)t=[0-9]+(s)?/.test(keyword)) {
-        await interaction.editReply(
-          "시간이 지정되어 있어요. 어떻게 할까요?\n\n1: 처음부터 재생\n2: 지정된 시간부터 재생"
-        );
-        const message = await interaction.channel?.awaitMessages({
-          filter: async (message) => {
-            if (
-              message.author.id === (interaction.member as GuildMember).id &&
-              message.channelId == interaction.channelId
-            ) {
-              await message.delete();
-              return true;
-            } else {
-              return false;
-            }
-          },
-          max: 1,
-          time: 30000,
-          errors: ["time"],
-        });
-        if (!message || !message.first()) {
-          await interaction.editReply(
-            "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요."
-          );
-          return;
-        }
-        const choice = message.first()?.content;
-        if (choice === "1") {
-          startFrom = 0;
-        } else if (choice === "2") {
-          startFrom = Number(/(\?|&)t=([0-9]+)(s)?/.exec(keyword)![2]);
-        } else {
-          await interaction.editReply("1 또는 2만 입력해 주세요.");
-          return;
-        }
-      }
-    } else {
-      const result = await search(keyword).catch(async () => {
-        return [];
-      });
-      if (!result || result.length === 0 || result[0].type != "video") {
-        await interaction.editReply("검색 결과가 없어요.");
-        return;
-      }
-      song = result;
+    const result = await bot.manager.search({
+      query: keyword,
+      requester: {
+        id: author.id,
+        name: author.displayName,
+        avatar: author.displayAvatarURL(),
+      },
+      limit: 5,
+    });
+    if (result.loadType === "error") {
+      const embed = new EmbedBuilder()
+        .setColor("#FF0000")
+        .setTitle(":warning: 오류가 발생했어요")
+        .setDescription(result.error || "알 수 없는 오류");
+      return await interaction.editReply({ embeds: [embed] });
     }
-    if (
-      !song ||
-      !interaction.guildId ||
-      !interaction.channel ||
-      !interaction.member
-    ) {
+    if (!result.tracks.length || result.loadType === "empty") {
       return await interaction.editReply("검색 결과가 없어요.");
     }
-    if (Array.isArray(song)) {
+    if (result.loadType === "playlist") {
+      return await interaction.editReply(
+        "재생목록은 지원하지 않아요. 개별 영상의 URL을 입력해 주세요."
+      );
+    }
+
+    let track;
+    if (result.loadType === "search") {
       try {
-        song = await makeChoice(song, interaction);
+        track = await makeChoice(result.tracks, interaction);
       } catch (err) {
         let message = "";
         if (err instanceof Error && err.message === "Cancel") {
@@ -131,42 +85,190 @@ export default new Command(
           components: [],
         });
       }
+    } else {
+      track = result.tracks[0];
     }
-    let guildQueue = bot.player.queue.get(interaction.guildId);
-    if (!guildQueue) {
-      bot.player.queue.set(
-        interaction.guildId,
-        new Queue(interaction.channel, author.voice.channel, bot)
+
+    const player = bot.manager.players.create({
+      guildId: interaction.guildId!,
+      voiceChannelId: author.voice.channel.id,
+      textChannelId: interaction.channelId,
+      autoPlay: false,
+    });
+    if (!player) {
+      return await interaction.editReply("플레이어를 생성할 수 없어요.");
+    }
+    let wrapper = bot.players.get(interaction.guildId!);
+    if (!wrapper) {
+      wrapper = new PlayerWrapper(bot, player);
+      bot.players.set(interaction.guildId!, wrapper);
+    }
+
+    player.queue.add(track);
+    player.connect();
+
+    const embed = new EmbedBuilder()
+      .setColor("#008000")
+      .setTitle(":white_check_mark: 곡을 추가했어요")
+      .setDescription(
+        `[\`${track.title}\`](<${track.url}>) (${timeString(track.duration / 1000)})`
       );
-      guildQueue = bot.player.queue.get(interaction.guildId);
-    }
-    if (!guildQueue) return;
-    const newSong = new Song(
-      song,
-      startFrom,
-      interaction.member as GuildMember
-    );
-    guildQueue.songs.push(newSong);
-    const embeds = [
-      new EmbedBuilder()
-        .setColor("#008000")
-        .setTitle(":white_check_mark: 곡을 추가했어요")
-        .setDescription(
-          `[\`${newSong.title}\`](<${newSong.url}>) (${newSong.duration})`
-        )
-        .setThumbnail(newSong.thumbnail),
-    ];
-    if (startFrom > 0) {
-      embeds[0].setFooter({
-        text: `시작 위치: ${convertSecondsToTime(startFrom)}`,
-      });
+    if (track.artworkUrl) {
+      embed.setThumbnail(track.artworkUrl);
     }
     await interaction.editReply({
       content: null,
-      embeds,
+      embeds: [embed],
     });
-    if (!guildQueue.isPlaying) {
-      await guildQueue.play(guildQueue.songs[0]);
+
+    if (!player.playing) {
+      player.play();
     }
+    if (wrapper.quitTimer) {
+      clearTimeout(wrapper.quitTimer);
+      wrapper.quitTimer = null;
+    }
+    // let song: Video[] | videoInfo;
+    // let startFrom = 0;
+    // if (
+    //   /((http|https):\/\/)?(youtu\.be\/(shorts\/)?|(www\.)?youtube\.com\/((watch\?(v|vi)=)|(shorts\/)))[A-Za-z0-9_\-]+((\?|&)t=[0-9]+(s)?)?/.test(
+    //     keyword
+    //   )
+    // ) {
+    //   try {
+    //     song = await getInfo(keyword);
+    //   } catch (err) {
+    //     await interaction.editReply(
+    //       "존재하지 않는 영상이에요. 링크를 다시 확인해 주세요."
+    //     );
+    //     return;
+    //   }
+    //   if (/(\?|&)t=[0-9]+(s)?/.test(keyword)) {
+    //     await interaction.editReply(
+    //       "시간이 지정되어 있어요. 어떻게 할까요?\n\n1: 처음부터 재생\n2: 지정된 시간부터 재생"
+    //     );
+    //     const channel = interaction.channel;
+    //     if (!channel || channel instanceof PartialGroupDMChannel) return;
+    //     const message = await channel.awaitMessages({
+    //       filter: async (message) => {
+    //         if (
+    //           message.author.id === (interaction.member as GuildMember).id &&
+    //           message.channelId == interaction.channelId
+    //         ) {
+    //           await message.delete();
+    //           return true;
+    //         } else {
+    //           return false;
+    //         }
+    //       },
+    //       max: 1,
+    //       time: 30000,
+    //       errors: ["time"],
+    //     });
+    //     if (!message || !message.first()) {
+    //       await interaction.editReply(
+    //         "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요."
+    //       );
+    //       return;
+    //     }
+    //     const choice = message.first()?.content;
+    //     if (choice === "1") {
+    //       startFrom = 0;
+    //     } else if (choice === "2") {
+    //       startFrom = Number(/(\?|&)t=([0-9]+)(s)?/.exec(keyword)![2]);
+    //     } else {
+    //       await interaction.editReply("1 또는 2만 입력해 주세요.");
+    //       return;
+    //     }
+    //   }
+    // } else {
+    //   const result = await search(keyword).catch(async () => {
+    //     return [];
+    //   });
+    //   if (!result || result.length === 0 || result[0].type != "video") {
+    //     await interaction.editReply("검색 결과가 없어요.");
+    //     return;
+    //   }
+    //   song = result;
+    // }
+    // if (
+    //   !song ||
+    //   !interaction.guildId ||
+    //   !interaction.channel ||
+    //   !interaction.member
+    // ) {
+    //   return await interaction.editReply("검색 결과가 없어요.");
+    // }
+    // if (Array.isArray(song)) {
+    //   try {
+    //     song = await makeChoice(song, interaction);
+    //   } catch (err) {
+    //     let message = "";
+    //     if (err instanceof Error && err.message === "Cancel") {
+    //       await interaction.deleteReply();
+    //       return;
+    //     }
+    //     if (err instanceof Error) {
+    //       switch (err.message) {
+    //         case "Timeout":
+    //           message = "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요.";
+    //           break;
+    //         case "invalidChoice":
+    //           message = "1~5 사이의 숫자만 입력해 주세요.";
+    //           break;
+    //         case "invalidResult":
+    //           message = "곡 정보를 받아올 수 없어요. 다시 시도해 주세요.";
+    //           break;
+    //         default:
+    //           console.error(err);
+    //           message = "알 수 없는 오류입니다. 개발자에게 문의하세요.";
+    //           break;
+    //       }
+    //     } else {
+    //       console.error(err);
+    //       message = "알 수 없는 오류입니다. 개발자에게 문의하세요.";
+    //     }
+    //     return await interaction.editReply({
+    //       content: message,
+    //       components: [],
+    //     });
+    //   }
+    // }
+    // let guildQueue = bot.player.queue.get(interaction.guildId);
+    // if (!guildQueue) {
+    //   bot.player.queue.set(
+    //     interaction.guildId,
+    //     new Queue(interaction.channel, author.voice.channel, bot)
+    //   );
+    //   guildQueue = bot.player.queue.get(interaction.guildId);
+    // }
+    // if (!guildQueue) return;
+    // const newSong = new Song(
+    //   song,
+    //   startFrom,
+    //   interaction.member as GuildMember
+    // );
+    // guildQueue.songs.push(newSong);
+    // const embeds = [
+    //   new EmbedBuilder()
+    //     .setColor("#008000")
+    //     .setTitle(":white_check_mark: 곡을 추가했어요")
+    //     .setDescription(
+    //       `[\`${newSong.title}\`](<${newSong.url}>) (${newSong.duration})`
+    //     )
+    //     .setThumbnail(newSong.thumbnail),
+    // ];
+    // if (startFrom > 0) {
+    //   embeds[0].setFooter({
+    //     text: `시작 위치: ${convertSecondsToTime(startFrom)}`,
+    //   });
+    // }
+    // await interaction.editReply({
+    //   content: null,
+    //   embeds,
+    // });
+    // if (!guildQueue.isPlaying) {
+    //   await guildQueue.play(guildQueue.songs[0]);
+    // }
   }
 );

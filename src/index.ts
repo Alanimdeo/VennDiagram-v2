@@ -1,9 +1,17 @@
 console.log(
   `봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`
 );
-import { Collection, GatewayIntentBits, Message, VoiceState } from "discord.js";
+import {
+  Collection,
+  EmbedBuilder,
+  GatewayIntentBits,
+  Message,
+  VoiceState,
+} from "discord.js";
 import { readdirSync, readFileSync } from "fs";
 import { Bot, Command, Config } from "./types";
+import { Manager } from "moonlink.js";
+import { timeString } from "./modules/time";
 
 console.log("설정 불러오는 중...");
 let config: Config;
@@ -14,7 +22,9 @@ function loadConfig(path: string = "."): Config {
       !configFile.token ||
       !configFile.adminPrefix ||
       !configFile.admins ||
-      !Array.isArray(configFile.admins)
+      !Array.isArray(configFile.admins) ||
+      !configFile.idleTimeout ||
+      !configFile.lavalink
     ) {
       throw new Error("잘못된 설정 파일입니다.");
     }
@@ -42,28 +52,6 @@ try {
 
 console.log("봇 생성 중...");
 
-const cookies = (() => {
-  if (!config.cookiesPath) {
-    return undefined;
-  }
-  try {
-    console.log("쿠키 불러오는 중...");
-
-    const cookies = JSON.parse(readFileSync(config.cookiesPath, "utf-8"));
-
-    if (!Array.isArray(cookies)) {
-      throw new Error("쿠키 파일이 잘못되었습니다.");
-    }
-
-    return cookies;
-  } catch (err) {
-    console.error("쿠키 파일을 불러오는 중 오류가 발생했습니다.");
-    console.error(err instanceof Error ? err.message : err);
-
-    return undefined;
-  }
-})();
-
 const bot: Bot = new Bot(
   {
     intents: [
@@ -73,7 +61,23 @@ const bot: Bot = new Bot(
       GatewayIntentBits.MessageContent,
     ],
   },
-  cookies
+  new Manager({
+    nodes: [
+      {
+        host: config.lavalink.host,
+        port: config.lavalink.port,
+        password: config.lavalink.password,
+        secure: config.lavalink.secure,
+      },
+    ],
+    options: {},
+    sendPayload: (guildId: string, payload: string) => {
+      const guild = bot.guilds.cache.get(guildId);
+      if (guild) {
+        guild.shard.send(JSON.parse(payload));
+      }
+    },
+  })
 );
 
 const path = readdirSync("./").includes("dist") ? "./dist" : ".";
@@ -96,7 +100,10 @@ for (const file of adminCommands) {
 }
 
 bot.once("clientReady", () => {
+  console.log("Moonlink 매니저 초기화 완료!");
   console.log(`준비 완료! 토큰: \x1b[32m${config.token}\x1b[0m`);
+
+  bot.manager.init(bot.user!.id);
 });
 
 bot.on("error", (err) => {
@@ -128,18 +135,77 @@ bot.on("messageCreate", async (message: Message) => {
 });
 
 bot.on("voiceStateUpdate", (_, newState: VoiceState) => {
-  const guildQueue = bot.player.queue.get(newState.guild.id);
-  if (!guildQueue || !guildQueue.connection.joinConfig.channelId) return;
+  const wrapper = bot.players.get(newState.guild.id);
+  if (!wrapper || !wrapper.player.connected) return;
   const channel = newState.guild.channels.cache.get(
-    guildQueue.connection.joinConfig.channelId
+    wrapper.player.voiceChannelId
   );
   if (!channel || !(channel.members instanceof Collection)) return;
   const members = Array.from(channel.members.keys());
   if (members.length === 1 || !bot.user || !members.includes(bot.user.id)) {
-    guildQueue.audioPlayer.stop(true);
-    guildQueue.connection.destroy();
-    bot.player.queue.delete(newState.guild.id);
+    wrapper.player.stop({ destroy: true });
+    bot.players.delete(newState.guild.id);
   }
+});
+
+bot.on("raw", (packet) => {
+  bot.manager.packetUpdate(packet);
+});
+
+bot.manager.on("nodeConnected", (node) => {
+  console.log(`Node ${node.identifier || node.host} connected`);
+});
+
+bot.manager.on("nodeDisconnect", (node) => {
+  console.log(`Node ${node.identifier || node.host} disconnected`);
+});
+
+bot.manager.on("nodeError", (node, error) => {
+  console.error(
+    `Node ${node.identifier || node.host} encountered an error:`,
+    error
+  );
+});
+
+bot.manager.on("trackStart", (player, track) => {
+  if (player.loop === "track") return;
+  const channel = bot.channels.cache.get(player.textChannelId);
+  const { name, avatar } = track.requestedBy as {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  if (channel && channel.isSendable()) {
+    const embed = new EmbedBuilder()
+      .setColor("#0067a3")
+      .setTitle(":arrow_forward: 노래를 재생할게요")
+      .setDescription(
+        `[\`${track.title}\`](<${track.url}>) (${timeString(track.duration / 1000)})`
+      )
+      .setFooter({
+        text: `${name} 님이 신청하셨어요.`,
+        iconURL: avatar,
+      });
+    if (track.artworkUrl) {
+      embed.setThumbnail(track.artworkUrl);
+    }
+    channel.send({
+      embeds: [embed],
+    });
+  }
+});
+
+bot.manager.on("queueEnd", (player) => {
+  const wrapper = bot.players.get(player.guildId);
+  if (!wrapper) return;
+  if (wrapper.quitTimer) {
+    clearTimeout(wrapper.quitTimer);
+    wrapper.quitTimer = null;
+  }
+  wrapper.quitTimer = setTimeout(() => {
+    wrapper.player.destroy();
+    bot.players.delete(player.guildId);
+  }, config.idleTimeout);
 });
 
 console.log("로그인 중...");

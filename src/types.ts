@@ -8,32 +8,40 @@ import {
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
-import { Player } from "./modules/player";
-import ytdl from "@distube/ytdl-core";
+import { Manager } from "moonlink.js";
+import { PlayerWrapper } from "./modules/player";
 
 export interface Config {
   token: string;
   adminPrefix: string;
   admins: string[];
-  cookiesPath?: string;
+  idleTimeout: number;
+  lavalink: LavalinkConfig;
+}
+
+export interface LavalinkConfig {
+  host: string;
+  port: number;
+  password: string;
+  secure: boolean;
 }
 
 export class Bot extends Client {
-  player: Player;
   commands: Collection<string, Command<ChatInputCommandInteraction>>;
   adminCommands: Collection<string, Command<Message>>;
   consoleCommands: Collection<string, Command<string[]>>;
   lastInteraction: Interaction | null;
-  ytdlAgent: ytdl.Agent;
+  manager: Manager;
+  players: Collection<string, PlayerWrapper>;
 
-  constructor(clientOptions: ClientOptions, cookies?: ytdl.Cookie[]) {
+  constructor(clientOptions: ClientOptions, manager: Manager) {
     super(clientOptions);
-    this.player = new Player();
     this.commands = new Collection<string, Command>();
     this.adminCommands = new Collection<string, Command>();
     this.consoleCommands = new Collection<string, Command>();
     this.lastInteraction = null;
-    this.ytdlAgent = ytdl.createAgent(cookies);
+    this.manager = manager;
+    this.players = new Collection<string, PlayerWrapper>();
   }
 }
 

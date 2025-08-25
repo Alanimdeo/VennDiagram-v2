@@ -5,30 +5,23 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "run-p -l tsc dev",
-    "dev": "supervisor -n success -w dist dist/index.js",
+    "dev": "supervisor -n success -w dist,config.json dist/index.js",
     "tsc": "tsc -w"
   },
   "repository": "https://github.com/alanimdeo/VennDiagram-v2",
   "author": "Alanimdeo",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/voice": "^0.17.0",
-    "@distube/ytdl-core": "^4.16.4",
-    "@distube/ytsr": "^2.0.4",
-    "discord-api-types": "^0.37.119",
-    "discord.js": "^14.18.0",
-    "ffmpeg": "^0.0.4",
-    "fluent-ffmpeg": "^2.1.3",
-    "libsodium-wrappers": "^0.7.14",
-    "node-fetch": "^3.3.2",
-    "prism-media": "^1.3.5",
-    "youtube-dl-exec": "^3.0.12"
+    "@discordjs/voice": "^0.19.0",
+    "discord-api-types": "^0.38.21",
+    "discord.js": "^14.22.1",
+    "libsodium-wrappers": "^0.7.15",
+    "moonlink.js": "^4.60.4"
   },
   "devDependencies": {
-    "@types/fluent-ffmpeg": "^2.1.25",
     "npm-run-all": "^4.1.5",
     "supervisor": "^0.12.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.2"
   },
-  "packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35"
+  "packageManager": "pnpm@10.15.0"
 }
