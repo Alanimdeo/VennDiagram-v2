@@ -16,6 +16,8 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     const player = bot.manager.players.get(interaction.guildId);
     if (!player || player.queue.size === 0)
         return await interaction.editReply("대기열에 노래가 없어요.");
+    if (author.voice.channel.id !== player.voiceChannelId)
+        return await interaction.editReply("봇과 같은 음성 채널에 참가하세요.");
     let removeNumber = interaction.options.getInteger("번호", true);
     if (removeNumber <= 0 || removeNumber > player.queue.size)
         return await interaction.editReply("선택한 번호가 없어요.");

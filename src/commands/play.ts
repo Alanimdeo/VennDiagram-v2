@@ -21,9 +21,15 @@ export default new Command(
     ),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
+
     let author: GuildMember = interaction.member as GuildMember;
     if (!author.voice.channel)
       return await interaction.editReply("먼저 음성 채널에 참가하세요.");
+
+    let _wrapper = bot.players.get(interaction.guildId!);
+    if (author.voice.channel.id !== _wrapper?.player.voiceChannelId)
+      return await interaction.editReply("봇과 같은 음성 채널에 참가하세요.");
+
     let keyword = interaction.options.getString("제목", true);
     const result = await bot.manager.search({
       query: keyword,
@@ -34,6 +40,7 @@ export default new Command(
       },
       limit: 5,
     });
+
     if (result.loadType === "error") {
       const embed = new EmbedBuilder()
         .setColor("#FF0000")

@@ -12,6 +12,8 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     let wrapper = bot.players.get(interaction.guildId);
     if (!wrapper)
         return await interaction.editReply("봇이 음성 채널에 참가 중이지 않아요.");
+    if (author.voice.channel.id !== wrapper.player.voiceChannelId)
+        return await interaction.editReply("봇과 같은 음성 채널에 참가하세요.");
     wrapper.player.stop({ destroy: true });
     bot.players.delete(interaction.guildId);
     await interaction.editReply({
