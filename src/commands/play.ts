@@ -87,6 +87,46 @@ export default new Command(
       }
     } else {
       track = result.tracks[0];
+      if (
+        /(\?|&)t=[0-9]+(s)?/.test(keyword) &&
+        interaction.channel &&
+        interaction.channel.isSendable()
+      ) {
+        await interaction.editReply(
+          "시간이 지정되어 있어요. 어떻게 할까요?\n\n1: 처음부터 재생\n2: 지정된 시간부터 재생"
+        );
+        const message = await interaction.channel.awaitMessages({
+          filter: async (message) => {
+            if (
+              message.author.id === (interaction.member as GuildMember).id &&
+              message.channelId == interaction.channelId
+            ) {
+              await message.delete();
+              return true;
+            } else {
+              return false;
+            }
+          },
+          max: 1,
+          time: 30000,
+          errors: ["time"],
+        });
+        if (!message || !message.first()) {
+          await interaction.editReply(
+            "시간이 초과되었어요. 30초 내에 번호를 입력해 주세요."
+          );
+          return;
+        }
+        const choice = message.first()?.content;
+        if (choice === "2") {
+          track.setPosition(
+            Number(/(\?|&)t=([0-9]+)(s)?/.exec(keyword)![2]) * 1000
+          );
+        } else if (choice !== "1") {
+          await interaction.editReply("1 또는 2만 입력해 주세요.");
+          return;
+        }
+      }
     }
 
     const player = bot.manager.players.create({
