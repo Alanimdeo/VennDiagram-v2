@@ -12,14 +12,20 @@ export default new Command(
     .setDescription("봇을 음성 채널에서 퇴장시킵니다."),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
+
     let author = interaction.member as GuildMember;
     if (!author.voice.channel)
       return await interaction.editReply("먼저 음성 채널에 참가하세요.");
+
     let wrapper = bot.players.get(interaction.guildId!);
     if (!wrapper)
       return await interaction.editReply(
         "봇이 음성 채널에 참가 중이지 않아요."
       );
+
+    if (author.voice.channel.id !== wrapper.player.voiceChannelId)
+      return await interaction.editReply("봇과 같은 음성 채널에 참가하세요.");
+
     wrapper.player.stop({ destroy: true });
     bot.players.delete(interaction.guildId!);
     await interaction.editReply({

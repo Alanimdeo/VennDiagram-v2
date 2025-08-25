@@ -12,6 +12,7 @@ export default new Command(
     .setDescription("재생 목록을 확인합니다."),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
+
     let message = "";
     const player = bot.manager.players.get(interaction.guildId!);
     if (player && (player.playing || player.queue.size !== 0)) {

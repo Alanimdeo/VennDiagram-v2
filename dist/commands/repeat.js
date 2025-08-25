@@ -17,6 +17,8 @@ exports.default = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     const player = bot.manager.players.get(interaction.guildId);
     if (!player)
         return await interaction.editReply("재생 목록에 노래가 없어요.");
+    if (author.voice.channel.id !== player.voiceChannelId)
+        return await interaction.editReply("봇과 같은 음성 채널에 참가하세요.");
     const repeatMode = interaction.options.getString("유형", true);
     if (!["off", "track", "queue"].includes(repeatMode)) {
         return await interaction.editReply("올바른 반복 유형을 선택하세요.");

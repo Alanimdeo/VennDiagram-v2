@@ -21,13 +21,18 @@ export default new Command(
     ),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     await interaction.deferReply();
+
     let author: GuildMember = interaction.member as GuildMember;
     if (!author.voice.channel)
       return await interaction.editReply("먼저 음성 채널에 참가하세요.");
+
     const player = bot.manager.players.get(interaction.guildId!);
     if (!player || !player.current) {
       return await interaction.editReply("현재 재생 중인 노래가 없어요.");
     }
+
+    if (author.voice.channel.id !== player.voiceChannelId)
+      return await interaction.editReply("봇과 같은 음성 채널에 참가하세요.");
 
     let str = interaction.options.getString("시간", true);
     let relative = "";
